@@ -15,7 +15,8 @@ int main(){
   pwmSetClock(400);
   pwmSetRange(1024);
    
-     pwmWrite(SERVO_PIN,40);
-      
+     pwmWrite(SERVO_PIN,80);
+ delay(1500);
+pwmWrite(SERVO_PIN,30);     
   return 0;
 }
