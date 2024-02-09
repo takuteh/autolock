@@ -18,7 +18,7 @@ int main(){
      pwmWrite(SERVO_PIN,70);
 delay(100);
      pwmWrite(SERVO_PIN,120);
-delay(2000);
+delay(800);
      pwmWrite(SERVO_PIN,70); 
 
   return 0;
