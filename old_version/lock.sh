@@ -1,4 +1,4 @@
 #!/bin/sh
 
-cd ~/
+cd ./Python
 sudo python main.py 
