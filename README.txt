@@ -2,7 +2,7 @@
 リセットボタン（未実装）GPIO 27
 リードスイッチGPIO 3
 開錠ボタン GPIO 9
-施錠ボタン GPIO 17
+施錠ボタン GPIO 2
 サーボモーター（上側）GPIO 19
 サーボモーター（下側）GPIO 6
 
@@ -27,7 +27,18 @@
 *施錠・解錠を手動でも行えるようにギアボックス付きのオートロックを追加した
 ソースはgear_version以下
 
+*autolock.cppをcontrol_servo.cpp,min_mqtt.cpp,nlohmann/json,pigpiod_if2,mosquittoのライブラリをリンクする
+
+コンパイルコマンド：
+g++ -o autolock autolock.cpp control_servo.cpp min_mqtt.cpp -lpigpiod_if2 -lmosquitto -Ijson/include
+
 *旧バージョンは鍵を直接サーボモーターで制御する方式である
 ソースはold_virsion以下
 
 *サーボモーターMG996Rの使用を前提としたギアボックスの3DCADデータは3D_Models以下にある
+
+*Eagleで作成した基板データ（board・schematic）はBoard_data以下にある
+
+*mqttでメッセージを送ることでも、施錠・開錠が可能である
+現バージョンでは指定したトピックに"1"というメッセージを送ると動作する
+バイナリがあるディレクトリのautolock_setting.jsonに各種設定を書き込む

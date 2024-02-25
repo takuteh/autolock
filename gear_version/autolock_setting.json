@@ -1,0 +1,8 @@
+{
+    "mqtt":{
+"broker_address":"localhost",
+"open_topic":"/door/open",
+"close_topic":"/door/close",
+"mqtt_port":1883
+    }
+}
