@@ -8,6 +8,7 @@
 #define OP_SW 9
 #define CL_SW 2
 #define RE_SW 3
+#define RERAY 22
 
 #define DEBOUNCE_TIME_US 1.5 
 #define TIMER_INTERVAL 300
@@ -33,12 +34,20 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick){
 void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message) {
     std::string topic_str=message->topic;
     std::string payload_str=(char *)message->payload;
+    std::cout<<topic_str<<std::endl;
 if(topic_str==mqtt.open_topic && payload_str=="1"){
  autolock.open_switch(1,DEBOUNCE_TIME_US);
 }
 
 if(topic_str==mqtt.close_topic && payload_str=="1"){
  autolock.close_switch(1,DEBOUNCE_TIME_US);
+}
+
+if(topic_str==mqtt.reray_topic && payload_str=="1"){
+    std::cout<<"reray"<<std::endl;
+    gpio_write(pi,RERAY,1);
+    sleep(1);
+    gpio_write(pi,RERAY,0);
 }
 }
 
@@ -55,11 +64,13 @@ int main(){
         set_mode(pi, OP_SW, PI_INPUT);
         set_mode(pi, CL_SW, PI_INPUT);
         set_mode(pi, RE_SW, PI_INPUT);
+        set_mode(pi, RERAY, PI_OUTPUT);
 
         //各ボタンをプルダウンに設定
         set_pull_up_down(pi, OP_SW, PI_PUD_UP);
         set_pull_up_down(pi, CL_SW, PI_PUD_UP);
         set_pull_up_down(pi, RE_SW, PI_PUD_UP);
+        set_pull_up_down(pi, RERAY, PI_PUD_DOWN);
 
         //ボタン割り込みのコールバック関数設定
         callback(pi, OP_SW, RISING_EDGE, open_sw);

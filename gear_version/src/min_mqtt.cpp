@@ -29,11 +29,13 @@ float data=0;
     static std::string broker_address=jobj["mqtt"]["broker_address"];
     static std::string open_topic=jobj["mqtt"]["open_topic"];
     static std::string close_topic=jobj["mqtt"]["close_topic"];
+    static std::string reray_topic=jobj["mqtt"]["reray_topic"];
     static int mqtt_port=jobj["mqtt"]["mqtt_port"];
 
     this->broker_address=broker_address.c_str();
     this->open_topic=open_topic.c_str();
     this->close_topic=close_topic.c_str();
+    this->reray_topic=reray_topic.c_str();
     this->mqtt_port=mqtt_port;
 }
 
@@ -73,5 +75,10 @@ int Mqtt::initialize_mqtt(){
         return 1;
     }
 
+    if (mosquitto_subscribe(this->mosq, NULL, this->reray_topic, 0) != MOSQ_ERR_SUCCESS) {
+        std::cerr << "Error: Unable to subscribe to the topic." << std::endl;
+        this->clean_mqtt();
+        return 1;
+    }
     return 0;
 }
