@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/takumi/autolock/gear_version/src",
+      "program": "/Users/takumi/autolock/gear_version/src/build/Debug/outDebug"
+    }
+  ]
+}

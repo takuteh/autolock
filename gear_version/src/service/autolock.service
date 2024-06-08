@@ -6,12 +6,12 @@ After=pigpiod.service
 Type=simple
 User=root
 Group=root
-WorkingDirectory=/home/pi/autolock/gear_version
-ExecStart=/home/pi/autolock/gear_version/autolock
+WorkingDirectory=/home/takumi/autolock/gear_version
+ExecStart=/home/takumi/autolock/gear_version/autolock
 ExecStop=/bin/kill -WINCH ${MAINPID}
 Restart=on-failure
 RestartSec=5s
 
 [Install]
-WantedBy=multi-user.targety
+WantedBy=multi-user.target
 
