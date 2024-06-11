@@ -57,7 +57,7 @@ void CONTROL_SERVO::close_switch(unsigned level,float debounce_time){
         return;
     }
 if(level==1){
-    if(gpio_read(pi,RE_SW)==1){
+    if(gpio_read(pi,RE_SW)==0){ //リードセンサーに反応がない場合無視する
         return;
     }
     std::cout<<"close"<<std::endl;
@@ -75,7 +75,7 @@ void CONTROL_SERVO::read_switch(unsigned level,float debounce_time){
     }
 if(level==0){
     std::cout<<"read_sw"<<std::endl;
-    sleep(2);
+    sleep(2); //完全に扉が閉まるまで待機
     this->close(19,6);
 }
     // 最後のボタン押下時刻を更新
