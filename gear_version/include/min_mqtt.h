@@ -5,7 +5,7 @@
 
 class Mqtt{
     public:
-    void set_param();
+    void set_param(std::string setting_file);
     const char* broker_address;
     const char* open_topic;
     const char* close_topic;

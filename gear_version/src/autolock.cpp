@@ -4,6 +4,7 @@
 #include <iostream>
 #include <chrono>
 #include "min_mqtt.h"
+#include <string.h>
 
 #define OP_SW 9
 #define CL_SW 2
@@ -12,6 +13,8 @@
 
 #define DEBOUNCE_TIME_US 1.5 
 #define TIMER_INTERVAL 300
+
+std::string setting_file=SETTING_FILE;
 
 int pi = pigpio_start(nullptr, nullptr);
 CONTROL_SERVO autolock(pi);
@@ -54,7 +57,7 @@ if(topic_str==mqtt.reray_topic && payload_str=="1"){
 int main(){
     //mqttの設定
          mqtt.mosq=mosquitto_new(NULL, true, NULL);
-         mqtt.set_param();
+         mqtt.set_param(setting_file);
 
          mqtt.initialize_mqtt();
          mosquitto_message_callback_set(mqtt.mosq, mqtt_message_received_wrapper);
@@ -81,7 +84,7 @@ int main(){
             autolock.current_rsw_time=time_time();
             auto elapsed_rsw_time=autolock.current_rsw_time-autolock.start_rsw_time;
             if(elapsed_rsw_time>=TIMER_INTERVAL&&elapsed_rsw_time<=TIMER_INTERVAL+0.5){
-              if(gpio_read(pi,RE_SW)==0){
+              if(gpio_read(pi,RE_SW)==1){
                std::cout<<"door_closed"<<std::endl; 
                autolock.close(19,6);
              }

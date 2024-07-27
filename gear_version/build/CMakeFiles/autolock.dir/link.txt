@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/autolock.dir/src/autolock.cpp.o -o /home/pi/autolock/gear_version/bin/autolock  -Wl,-rpath,/home/pi/autolock/gear_version/lib /usr/lib/libpigpiod_if2.so /usr/lib/aarch64-linux-gnu/libmosquitto.so /home/pi/autolock/gear_version/lib/libmin_mqtt.a /home/pi/autolock/gear_version/lib/libcontrol_servo.so 

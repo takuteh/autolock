@@ -40,6 +40,11 @@
 下記コマンドを実行すれば以下の処理や設定が全て行われる
 ```
 cd gear_version
+mkdir build
+cd build
+cmake ..
+make
+cd ..
 sudo setup.sh
 ```
 
@@ -48,16 +53,14 @@ sudo setup.sh
 
 - `/etc/mosquitto/mosquitto.conf`を変更し、mqtt のポート設定と外部からのアクセス許可をする
 
-- コンパイル：
-  src 直下で `make` とすればバイナリが生成される、以下のコマンドを実行しても良い  
-```  
-g++ -o autolock autolock.cpp control_servo.cpp min_mqtt.cpp -lpigpiod_if2 -lmosquitto -Ijson/include
-```
-  autolock.cpp を`control_servo.cpp`,`min_mqtt.cpp`,`nlohmann/json`,`pigpiod_if2`,`mosquitto`のライブラリとリンクする
+- 実行ファイル
+　バイナリは`gear_version/bin`に生成される
+- ライブラリ：
+  lib内に配置される`control_servo`,`min_mqtt`と`nlohmann/json`,`pigpiod_if2`,`mosquitto`をリンクする
 
 - systemd に autolock のプログラムを登録し自動起動を設定する
-  Unit ファイルは`gear_version/src/service/autolock.service`である
-  git cloneしたディレクトリに修正する必要あり
+  Unit ファイルは`gear_version/service/autolock.service`である
+  バイナリのあるディレクトリに修正する必要あり
 
 - サーボモーター MG996R の使用を前提としたギアボックスの 3DCAD データ(stl 形式)は 3D_Models 以下にある
 
@@ -65,7 +68,7 @@ g++ -o autolock autolock.cpp control_servo.cpp min_mqtt.cpp -lpigpiod_if2 -lmosq
 
 - mqtt でメッセージを送ることでも、施錠・開錠が可能である  
   現バージョンでは指定したトピックに"1"というメッセージを送ると動作する  
-  バイナリがあるディレクトリの`autolock_setting.json`に各種設定を書き込む
+  `gear_version/etc/autolock_setting.json`に各種設定を書き込む
 
 - 作者の環境ではラズパイとモーターの電源は別で取っているので、モーターの動作が不安定になった場合に備えリレーで電源を制御している
   reray_on.cpp/reray_off.cpp でそれぞれ電源の入切が可能である

@@ -57,7 +57,7 @@ void CONTROL_SERVO::close_switch(unsigned level,float debounce_time){
         return;
     }
 if(level==1){
-    if(gpio_read(pi,RE_SW)==0){ //リードセンサーに反応がない場合無視する
+    if(gpio_read(pi,RE_SW)==1){ //リードセンサーに反応がない場合無視する
         return;
     }
     std::cout<<"close"<<std::endl;

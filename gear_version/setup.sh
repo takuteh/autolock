@@ -40,24 +40,22 @@ fi
 echo "Mqtt listener port is" $MQTT_PORT
 
 #setting.jsonにMQTTのポートを設定
-if ! grep -q "mqtt_port" autolock_setting.json; then
-    echo "mqtt_port:$MQTT_PORT" >> autolock_setting.json
+if ! grep -q "mqtt_port" $WD/etc/autolock_setting.json; then
+    echo "mqtt_port:$MQTT_PORT" >> $WD/etc/autolock_setting.json
 else 
-    sed -i "s/\"mqtt_port\":[0-9]*/\"mqtt_port\":$MQTT_PORT/" autolock_setting.json
+    sed -i "s/\"mqtt_port\":[0-9]*/\"mqtt_port\":$MQTT_PORT/" $WD/etc/autolock_setting.json
 fi
 
-#autolockコンパイル
-cd src
-make
 
 #systemd登録
-sed -i "s|^WorkingDirectory=.*|WorkingDirectory=$WD|" "service/autolock.service"
-sed -i "s|^ExecStart=.*|ExecStart=$WD/autolock|" "service/autolock.service"
-cp service/autolock.service /etc/systemd/system
+echo $WD
+sed -i "s|^ExecStart=.*|ExecStart=$WD/bin/autolock|" "service/autolock.service"
+cp $WD/service/autolock.service /etc/systemd/system
 systemctl daemon-reload 
 systemctl enable autolock.service
 systemctl enable pigpiod.service
 
+#serviceを起動すればよいのでstartさせるだけでもいい
 if ask_yes_no "All tasks are completed. Do you want to reboot the system?"; then
     echo "Rebooting the system..."
     reboot

@@ -8,8 +8,8 @@
 using json = nlohmann::json;
 using namespace std;
 
-void Mqtt::set_param(){
-std::string filePath="autolock_setting.json";
+void Mqtt::set_param(std::string setting_file){
+std::string filePath=setting_file;
 float data=0;
 
 	std::ifstream ifs(filePath);
