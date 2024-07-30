@@ -3,7 +3,7 @@
 "broker_address":"localhost",
 "open_topic":"/door/open",
 "close_topic":"/door/close",
-"reray_topic":"/door/reray",
+"relay_topic":"/door/relay",
 "mqtt_port":1883
     }
 }

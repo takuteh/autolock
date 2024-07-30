@@ -12,10 +12,10 @@
 
 ## 運用方法・注意事項
 
-<ins>**1.old_version(鍵・モーター直結型)**</ins>
+<ins>**1.direct_version(鍵・モーター直結型)**</ins>
 
 - 鍵に直接モーターを取り付けて制御する方式である
-  ソースは old_version 以下
+  ソースは direct_version 以下
 
 - lock.sh を crontab に記述すれば、起動時に実行されるようになる
 
@@ -55,6 +55,8 @@ sudo setup.sh
 
 - 実行ファイル
 　バイナリは`gear_version/bin`に生成される
+  各種テストコードはビルドディレクトリのsrc/test_code内
+
 - ライブラリ：
   lib内に配置される`control_servo`,`min_mqtt`と`nlohmann/json`,`pigpiod_if2`,`mosquitto`をリンクする
 

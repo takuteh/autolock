@@ -1,2 +1,0 @@
-/usr/bin/ar qc /home/pi/autolock/gear_version/lib/libmin_mqtt.a CMakeFiles/min_mqtt.dir/src/min_mqtt.cpp.o
-/usr/bin/ranlib /home/pi/autolock/gear_version/lib/libmin_mqtt.a

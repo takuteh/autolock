@@ -1,15 +1,15 @@
 #include <pigpiod_if2.h>
-#include "control_servo.h"
+#include <control_servo.h>
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
-#include "min_mqtt.h"
+#include <min_mqtt.h>
 #include <string.h>
 
 #define OP_SW 9
 #define CL_SW 2
 #define RE_SW 3
-#define RERAY 22
+#define RELAY 22
 
 #define DEBOUNCE_TIME_US 1.5 
 #define TIMER_INTERVAL 300
@@ -46,11 +46,11 @@ if(topic_str==mqtt.close_topic && payload_str=="1"){
  autolock.close_switch(1,DEBOUNCE_TIME_US);
 }
 
-if(topic_str==mqtt.reray_topic && payload_str=="1"){
-    std::cout<<"reray"<<std::endl;
-    gpio_write(pi,RERAY,1);
+if(topic_str==mqtt.relay_topic && payload_str=="1"){
+    std::cout<<"relay"<<std::endl;
+    gpio_write(pi,RELAY,1);
     sleep(1);
-    gpio_write(pi,RERAY,0);
+    gpio_write(pi,RELAY,0);
 }
 }
 
@@ -67,13 +67,13 @@ int main(){
         set_mode(pi, OP_SW, PI_INPUT);
         set_mode(pi, CL_SW, PI_INPUT);
         set_mode(pi, RE_SW, PI_INPUT);
-        set_mode(pi, RERAY, PI_OUTPUT);
+        set_mode(pi, RELAY, PI_OUTPUT);
 
         //各ボタンをプルダウンに設定
         set_pull_up_down(pi, OP_SW, PI_PUD_UP);
         set_pull_up_down(pi, CL_SW, PI_PUD_UP);
         set_pull_up_down(pi, RE_SW, PI_PUD_UP);
-        set_pull_up_down(pi, RERAY, PI_PUD_DOWN);
+        set_pull_up_down(pi, RELAY, PI_PUD_DOWN);
 
         //ボタン割り込みのコールバック関数設定
         callback(pi, OP_SW, RISING_EDGE, open_sw);

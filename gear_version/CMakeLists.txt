@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 project(autolock CXX)
 
+add_subdirectory(src/test_code)
+
 #絶対パスに変換
 get_filename_component(CURRENT_DIR "${CMAKE_SOURCE_DIR}" ABSOLUTE)
 
@@ -12,7 +14,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CURRENT_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CURRENT_DIR}/lib)
 
 #生成バイナリの出力先
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CURRENT_DIR}/bin)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CURRENT_DIR}/bin)
 
 #ライブラリの生成
 add_library(min_mqtt STATIC ${CMAKE_SOURCE_DIR}/src/min_mqtt.cpp)
@@ -22,6 +24,7 @@ set(MY_LIBRARY min_mqtt control_servo)
 
 #バイナリ生成
 add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/autolock.cpp)
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CURRENT_DIR}/bin)
 
 #設定ファイルのパスをマクロに登録
 target_compile_definitions(${PROJECT_NAME} PRIVATE SETTING_FILE="${CURRENT_DIR}/etc/autolock_setting.json")
@@ -39,14 +42,4 @@ include_directories(${CURRENT_DIR}/json/include)
 include_directories(${CURRENT_DIR}/include)
 link_directories(${CURRENT_DIR}/lib)
 
-#make clean
-add_custom_target(custom_clean
-	COMMAND rm *.a *.so
-)
-
-#make install
-install(TARGETS ${MY_LIBRARY}
-		LIBRARY DESTINATION ${CURRENT_DIR}/lib
-		ARCHIVE DESTINATION ${CURRENT_DIR}/lib
-)
 

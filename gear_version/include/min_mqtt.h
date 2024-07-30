@@ -9,7 +9,7 @@ class Mqtt{
     const char* broker_address;
     const char* open_topic;
     const char* close_topic;
-    const char* reray_topic;
+    const char* relay_topic;
     struct mosquitto *mosq;
     int mqtt_port;
     void on_message(struct mosquitto *, void *, const struct mosquitto_message *message);
