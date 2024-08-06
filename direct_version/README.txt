@@ -1,5 +1,6 @@
 このバージョンは鍵に直接サーボモーターを取り付け制御する方式である
 
-fericaを使った認証をしたいためライブラリの豊富なPythonがメインのコードである
-サーボモーターの制御自体はCで書いたものを呼び出しているのでC内のopen.c close.cそれぞれをopen closeとしてコンパイルしPythonディレクトリにmvすれば実行可能
-C++はPythonをC++に書き直そうとしているが、開発中のため現在は使用していない
+- fericaを使った認証をしたいためライブラリの豊富なPythonがメインのコードである
+- サーボモーターの制御自体はCで書いたものを呼び出しているのでC内のopen.c close.cそれぞれをopen closeとしてコンパイルしPythonディレクトリにmvすれば実行可能
+- C++はPythonをC++に書き直そうとしているが、開発中のため現在は使用していない
+- Pythonディレクトリ内のdirect_lock.serviceを/etc/systemd/system以下に配置すれば、direct_lock.serviceとして登録される

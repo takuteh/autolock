@@ -1,22 +1,14 @@
 #include <stdio.h>
-#include <stdint.h>
-#include <wiringPi.h>
+#include <unistd.h>
+#include <pigpiod_if2.h>
 
 #define SERVO_PIN 19
 
 int main(){
-  if (wiringPiSetupGpio() == -1) {
-     printf("cannot setup gpio.");
-    return 1;
-  }
+	int pi=pigpio_start(0,0);
 
-  pinMode(SERVO_PIN, PWM_OUTPUT);
-  pwmSetMode(PWM_MODE_MS);
-  pwmSetClock(400);
-  pwmSetRange(1024);
-   
-     pwmWrite(SERVO_PIN,80);
- delay(1500);
-pwmWrite(SERVO_PIN,30);     
+  set_mode(pi,SERVO_PIN,PI_OUTPUT); 
+    // set_servo_pulsewidth(pi,SERVO_PIN,1500);
+     set_servo_pulsewidth(pi,SERVO_PIN,900);
   return 0;
 }
