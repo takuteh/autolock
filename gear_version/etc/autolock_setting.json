@@ -1,9 +1,12 @@
 {
-    "mqtt":{
-"broker_address":"localhost",
-"open_topic":"/door/open",
-"close_topic":"/door/close",
-"relay_topic":"/door/relay",
-"mqtt_port":1883
-    }
+  "mqtt": {
+    "broker_address": "localhost",
+    "open_topic": "/door/open",
+    "close_topic": "/door/close",
+    "relay_topic": "/door/relay",
+    "mqtt_port": 1883
+  },
+  "line": {
+    "channel_token": "token"
+  }
 }
