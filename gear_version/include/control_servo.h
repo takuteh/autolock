@@ -12,10 +12,12 @@ class CONTROL_SERVO{
     std::time_t start_rsw_time=0;
     std::time_t last_button_time=0;
     std::time_t current_rsw_time=0;
-    uint32_t current_time=0;
-    void open_switch(unsigned level,float debounce_time);
-    void close_switch(unsigned level,float debounce_time);
-    void read_switch(unsigned level,float debounce_time);
+    std::time_t current_time=0;
+    std::time_t last_rsw_time=0;
+    std::time_t current_rsw_time1=0;
+    int open_switch(unsigned level,float debounce_time);
+    int close_switch(unsigned level,float debounce_time);
+    int read_switch(unsigned level,float debounce_time);
 
 };
 

@@ -48,6 +48,7 @@ bool line_api::sendLineMessage(std::string message)
         if (res != CURLE_OK)
             std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
 
+        std::cout << message << std::endl;
         // curl ハンドルの解放
         curl_easy_cleanup(curl);
     }

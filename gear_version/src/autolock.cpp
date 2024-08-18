@@ -7,6 +7,8 @@
 #include <string.h>
 #include <line_api.h>
 #include <autolock_setting.h>
+#include <thread>
+#include <ctime>
 
 #define OP_SW 9
 #define CL_SW 2
@@ -26,23 +28,54 @@ autolock_setting au_set(setting_file);
 Mqtt mqtt;
 line_api line(au_set);
 
-volatile uint32_t last_button_time = 0;
+std::time_t last_rsw_exe_time = 0;     // リードスイッチ、最終処理実行時刻
+std::time_t current_rsw_call_time = 0; // リードスイッチ、コールバック呼び出し時刻
 
 void open_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
 {
-    autolock.open_switch(level, DEBOUNCE_TIME_US);
-    line.sendLineMessage("開錠ボタンが押されました");
+    if (!autolock.open_switch(level, DEBOUNCE_TIME_US))
+    {
+        std::thread([]
+                    { line.sendLineMessage("ボタンで解錠しました"); })
+            .detach();
+    }
 }
 
 void close_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
 {
-    autolock.close_switch(level, DEBOUNCE_TIME_US);
-    line.sendLineMessage("施錠ボタンが押されました");
+    if (!autolock.close_switch(level, DEBOUNCE_TIME_US))
+    {
+        std::thread([]
+                    { line.sendLineMessage("ボタンで施錠しました"); })
+            .detach();
+    }
 }
 
 void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
 {
-    autolock.read_switch(level, DEBOUNCE_TIME_US);
+    current_rsw_call_time = time_time(); // 現在時刻の更新
+    // 直前のボタンの押下から一定時間が経過していない場合は無視する
+    if (current_rsw_call_time - last_rsw_exe_time < DEBOUNCE_TIME_US)
+    {
+        return;
+    }
+    if (level == 0)
+    {
+        if (!autolock.read_switch(level, DEBOUNCE_TIME_US))
+        {
+            std::thread([]
+                        { line.sendLineMessage("ドアが閉まりました"); })
+                .detach();
+            last_rsw_exe_time = time_time(); // 最終処理時刻の更新
+        }
+    }
+    else if (level == 1)
+    {
+        std::thread([]
+                    { line.sendLineMessage("ドアが開きました"); })
+            .detach();
+        last_rsw_exe_time = time_time(); // 最終処理時刻の更新
+    }
 }
 
 void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message)
@@ -95,21 +128,24 @@ int main()
     callback(pi, OP_SW, RISING_EDGE, open_sw);
     callback(pi, CL_SW, RISING_EDGE, close_sw);
     callback(pi, RE_SW, EITHER_EDGE, read_sw);
+
     mosquitto_loop_start(mqtt.mosq);
     while (1)
     {
         autolock.current_rsw_time = time_time();
         auto elapsed_rsw_time = autolock.current_rsw_time - autolock.start_rsw_time;
+        // 鍵が開きっぱなしにならないための処理
         if (elapsed_rsw_time >= TIMER_INTERVAL && elapsed_rsw_time <= TIMER_INTERVAL + 0.5)
         {
-            if (gpio_read(pi, RE_SW) == 1)
+            if (gpio_read(pi, RE_SW) == 0)
             {
                 std::cout << "door_closed" << std::endl;
                 autolock.close(19, 6);
+                line.sendLineMessage("タイムアウトしたため施錠しました");
             }
         }
         sleep(1);
-        std::cout << "0" << std::endl;
+        std::cout << gpio_read(pi, RE_SW) << std::endl;
     }
     mqtt.clean_mqtt();
     return 0;
