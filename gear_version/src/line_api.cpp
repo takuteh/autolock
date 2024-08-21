@@ -5,18 +5,16 @@
 #include <autolock_setting.h>
 #include <line_api.h>
 
-line_api::line_api(autolock_setting &set)
+line_api::line_api(std::string token)
 {
-    this->channel_token = set.channel_token;
-    this->UserIds = {"Ua4ee41b47723bc9d3d55a8f62a00781f"};
-    // const & userIds,
+    this->channel_token = token;
+    this->line_api_url = "https://api.line.me/v2/bot/message/multicast";
 }
 
-bool line_api::sendLineMessage(std::string message)
+bool line_api::send_line_message(std::vector<std::string> UserIds, std::string message)
 {
     CURL *curl;
     CURLcode res;
-    std::string url = "https://api.line.me/v2/bot/message/multicast"; // マルチキャスト用
 
     // ヘッダーの設定
     struct curl_slist *headers = nullptr;
@@ -25,10 +23,10 @@ bool line_api::sendLineMessage(std::string message)
 
     // JSONデータの作成
     std::string jsonData = "{ \"to\": [";
-    for (size_t i = 0; i < this->UserIds.size(); ++i)
+    for (size_t i = 0; i < UserIds.size(); ++i)
     {
-        jsonData += "\"" + this->UserIds[i] + "\"";
-        if (i < this->UserIds.size() - 1)
+        jsonData += "\"" + UserIds[i] + "\"";
+        if (i < UserIds.size() - 1)
         {
             jsonData += ",";
         }
@@ -39,15 +37,17 @@ bool line_api::sendLineMessage(std::string message)
     curl = curl_easy_init();
     if (curl)
     {
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());             // リクエスト送信URL指定
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);          // リクエストに含むヘッダー設定
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonData.c_str()); // リクエストの本文設定
+        curl_easy_setopt(curl, CURLOPT_URL, this->line_api_url.c_str()); // リクエスト送信URL指定
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);             // リクエストに含むヘッダー設定
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonData.c_str());    // リクエストの本文設定
 
         // HTTPリクエスト送信
         res = curl_easy_perform(curl);
         if (res != CURLE_OK)
+        {
             std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
-
+            return false;
+        }
         std::cout << message << std::endl;
         // curl ハンドルの解放
         curl_easy_cleanup(curl);
@@ -55,5 +55,5 @@ bool line_api::sendLineMessage(std::string message)
 
     // ヘッダーリストのメモリ解放
     curl_slist_free_all(headers);
-    return CURLE_OK ? true : false;
+    return true;
 }

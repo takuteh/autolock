@@ -15,7 +15,8 @@ autolock_setting::autolock_setting(std::string setting_file)
     this->open_topic = "/door/open";
     this->close_topic = "/door/close";
     this->relay_topic = "/door/relay";
-    this->channel_token = "";
+    this->line_channel_token = "";
+    this->slack_channel_token = "";
     this->mqtt_port = 1883;
     this->load_setting();
 }
@@ -47,12 +48,14 @@ bool autolock_setting::load_setting()
     this->Close_topic = jobj["mqtt"]["close_topic"];
     this->Relay_topic = jobj["mqtt"]["relay_topic"];
     this->mqtt_port = jobj["mqtt"]["mqtt_port"]; // intなのでそのまま代入
-    this->Channel_token = jobj["line"]["channel_token"];
+    this->Line_channel_token = jobj["line"]["channel_token"];
+    this->Slack_channel_token = jobj["slack"]["channel_token"];
 
     this->broker_address = this->Broker_address.c_str();
     this->open_topic = this->Open_topic.c_str();
     this->close_topic = this->Close_topic.c_str();
     this->relay_topic = this->Relay_topic.c_str();
-    this->channel_token = this->Channel_token.c_str();
+    this->line_channel_token = this->Line_channel_token.c_str();
+    this->slack_channel_token = this->Slack_channel_token.c_str();
     return true;
 }

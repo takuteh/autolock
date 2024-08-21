@@ -10,7 +10,8 @@ public:
     const char *open_topic;
     const char *close_topic;
     const char *relay_topic;
-    const char *channel_token;
+    const char *line_channel_token;
+    const char *slack_channel_token;
     int mqtt_port;
     std::string setting_file;
 
@@ -19,7 +20,8 @@ private:
     std::string Open_topic;
     std::string Close_topic;
     std::string Relay_topic;
-    std::string Channel_token;
+    std::string Line_channel_token;
+    std::string Slack_channel_token;
 };
 
 #endif

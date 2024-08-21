@@ -8,5 +8,8 @@
   },
   "line": {
     "channel_token": "token"
+  },
+  "slack": {
+    "channel_token": "token"
   }
 }

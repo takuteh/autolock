@@ -20,10 +20,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CURRENT_DIR}/bin)
 #ライブラリの生成
 add_library(min_mqtt STATIC ${CMAKE_SOURCE_DIR}/src/min_mqtt.cpp)
 add_library(line_api STATIC ${CMAKE_SOURCE_DIR}/src/line_api.cpp)
+add_library(slack_api STATIC ${CMAKE_SOURCE_DIR}/src/slack_api.cpp)
 add_library(autolock_setting STATIC ${CMAKE_SOURCE_DIR}/src/autolock_setting.cpp)
 add_library(control_servo SHARED ${CMAKE_SOURCE_DIR}/src/control_servo.cpp)
 
-set(MY_LIBRARY min_mqtt control_servo line_api autolock_setting)
+set(MY_LIBRARY min_mqtt control_servo line_api autolock_setting slack_api)
 
 #バイナリ生成
 add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/autolock.cpp)
