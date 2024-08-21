@@ -29,7 +29,7 @@ int Mqtt::initialize_mqtt(autolock_setting &set)
         return 1;
     }
 
-    if (mosquitto_connect(this->mosq, /*set.broker_address*/ "localhost", /*set.mqtt_port*/ 1883, 60) != MOSQ_ERR_SUCCESS)
+    if (mosquitto_connect(this->mosq, set.broker_address, set.mqtt_port, 60) != MOSQ_ERR_SUCCESS)
     {
         std::cerr << "Error: Unable to connect to the broker." << std::endl;
         this->clean_mqtt();

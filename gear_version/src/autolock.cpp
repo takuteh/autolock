@@ -32,9 +32,6 @@ Mqtt mqtt;
 line_api line(au_set.line_channel_token);
 slack_api slack(au_set.slack_channel_token);
 
-std::string slack_channel = "#general";
-std::vector<std::string> line_user_ids = {"your_id"};
-
 std::time_t last_rsw_exe_time = 0;     // リードスイッチ、最終処理実行時刻
 std::time_t current_rsw_call_time = 0; // リードスイッチ、コールバック呼び出し時刻
 
@@ -44,8 +41,8 @@ void open_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
     {
         std::thread([]
                     { 
-            line.send_line_message(line_user_ids,"ボタンで解錠しました");
-            slack.send_slack_message(slack_channel, "ボタンで解錠しました"); })
+            line.send_line_message(au_set.line_user_ids,"ボタンで解錠しました");
+            slack.send_slack_message(au_set.slack_send_channel, "ボタンで解錠しました"); })
             .detach();
     }
 }
@@ -56,8 +53,8 @@ void close_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
     {
         std::thread([]
                     { 
-            line.send_line_message(line_user_ids,"ボタンで施錠しました");
-            slack.send_slack_message(slack_channel, "ボタンで施錠しました"); })
+            line.send_line_message(au_set.line_user_ids,"ボタンで施錠しました");
+            slack.send_slack_message(au_set.slack_send_channel, "ボタンで施錠しました"); })
             .detach();
     }
 }
@@ -76,8 +73,8 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
         {
             std::thread([]
                         {
-                line.send_line_message(line_user_ids,"ドアが閉まりました");
-                slack.send_slack_message(slack_channel, "ドアが閉まりました"); })
+                line.send_line_message(au_set.line_user_ids,"ドアが閉まりました");
+                slack.send_slack_message(au_set.slack_send_channel, "ドアが閉まりました"); })
                 .detach();
             last_rsw_exe_time = time_time(); // 最終処理時刻の更新
         }
@@ -86,8 +83,8 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
     {
         std::thread([]
                     { 
-            line.send_line_message(line_user_ids,"ドアが開きました");
-            slack.send_slack_message(slack_channel, "ドアが開きました"); })
+            line.send_line_message(au_set.line_user_ids,"ドアが開きました");
+            slack.send_slack_message(au_set.slack_send_channel, "ドアが開きました"); })
             .detach();
         last_rsw_exe_time = time_time(); // 最終処理時刻の更新
     }
@@ -98,25 +95,27 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     std::string topic_str = message->topic;
     std::string payload_str = (char *)message->payload;
     std::cout << topic_str << std::endl;
-    if (topic_str == au_set.open_topic && payload_str == "1")
+    if (topic_str == au_set.open_topic && payload_str == au_set.open_message)
     {
         autolock.open_switch(1, DEBOUNCE_TIME_US);
         std::thread([]
                     {
-        line.send_line_message(line_user_ids, "MQTTで開錠しました");
-        slack.send_slack_message(slack_channel, "MQTTで開錠しました"); })
+        line.send_line_message(au_set.line_user_ids, "MQTTで開錠しました");
+        slack.send_slack_message(au_set.slack_send_channel, "MQTTで開錠しました"); })
+            .detach();
     }
 
-    if (topic_str == au_set.close_topic && payload_str == "1")
+    if (topic_str == au_set.close_topic && payload_str == au_set.close_message)
     {
         autolock.close_switch(1, DEBOUNCE_TIME_US);
         std::thread([]
                     {
-        line.send_line_message(line_user_ids, "MQTTで施錠しました");
-        slack.send_slack_message(slack_channel, "MQTTで施錠しました"); })
+        line.send_line_message(au_set.line_user_ids, "MQTTで施錠しました");
+        slack.send_slack_message(au_set.slack_send_channel, "MQTTで施錠しました"); })
+            .detach();
     }
 
-    if (topic_str == au_set.relay_topic && payload_str == "1")
+    if (topic_str == au_set.relay_topic && payload_str == au_set.relay_message)
     {
         std::cout << "relay" << std::endl;
         gpio_write(pi, RELAY, 1);
@@ -124,8 +123,9 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
         gpio_write(pi, RELAY, 0);
         std::thread([]
                     {
-        line.send_line_message(line_user_ids, "MQTTでモーターのリセットをしました");
-        slack.send_slack_message(slack_channel, "MQTTでモーターのリセットをしました"); })
+        line.send_line_message(au_set.line_user_ids, "MQTTでモーターのリセットをしました");
+        slack.send_slack_message(au_set.slack_send_channel, "MQTTでモーターのリセットをしました"); })
+            .detach();
     }
 }
 
@@ -167,8 +167,9 @@ int main()
                 autolock.close(19, 6);
                 std::thread([]
                             {
-                line.send_line_message(line_user_ids, "タイムアウトしたため施錠しました");
-                slack.send_slack_message(slack_channel, "タイムアウトしたため施錠しました"); })
+                line.send_line_message(au_set.line_user_ids, "タイムアウトしたため施錠しました");
+                slack.send_slack_message(au_set.slack_send_channel, "タイムアウトしたため施錠しました"); })
+                    .detach();
             }
         }
         sleep(1);

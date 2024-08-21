@@ -20,7 +20,7 @@ ask_yes_no() {
 
 WD=$(pwd)
 #パッケージインストール
-apt install pigpio mosquitto libmosquitto-dev
+apt install pigpio mosquitto libmosquitto-dev libcurl4-openssl-dev
 
 #mqtt設定
 MQTT_CONFIG="/etc/mosquitto/mosquitto.conf"
@@ -54,6 +54,7 @@ cp $WD/service/autolock.service /etc/systemd/system
 systemctl daemon-reload 
 systemctl enable autolock.service
 systemctl enable pigpiod.service
+systemctl enable mosquitto.service
 
 #serviceを起動すればよいのでstartさせるだけでもいい
 if ask_yes_no "All tasks are completed. Do you want to reboot the system?"; then

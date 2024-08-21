@@ -15,9 +15,14 @@ autolock_setting::autolock_setting(std::string setting_file)
     this->open_topic = "/door/open";
     this->close_topic = "/door/close";
     this->relay_topic = "/door/relay";
+    this->open_message = "1";
+    this->close_message = "1";
+    this->relay_message = "1";
     this->line_channel_token = "";
     this->slack_channel_token = "";
+    this->slack_send_channel = "#general";
     this->mqtt_port = 1883;
+    // 設定読み込み
     this->load_setting();
 }
 
@@ -43,19 +48,24 @@ bool autolock_setting::load_setting()
     // JSON文字列をパース:
     auto jobj = json::parse(jsonstr);
 
+    // mosquittoで使うものは[const char*]のため、一旦string型の変数に格納
     this->Broker_address = jobj["mqtt"]["broker_address"];
     this->Open_topic = jobj["mqtt"]["open_topic"];
     this->Close_topic = jobj["mqtt"]["close_topic"];
     this->Relay_topic = jobj["mqtt"]["relay_topic"];
-    this->mqtt_port = jobj["mqtt"]["mqtt_port"]; // intなのでそのまま代入
-    this->Line_channel_token = jobj["line"]["channel_token"];
-    this->Slack_channel_token = jobj["slack"]["channel_token"];
-
+    // const char*に変換
     this->broker_address = this->Broker_address.c_str();
     this->open_topic = this->Open_topic.c_str();
     this->close_topic = this->Close_topic.c_str();
     this->relay_topic = this->Relay_topic.c_str();
-    this->line_channel_token = this->Line_channel_token.c_str();
-    this->slack_channel_token = this->Slack_channel_token.c_str();
+
+    this->open_message = jobj["mqtt"]["open_message"];
+    this->close_message = jobj["mqtt"]["close_message"];
+    this->relay_message = jobj["mqtt"]["relay_message"];
+    this->mqtt_port = jobj["mqtt"]["mqtt_port"];
+    this->line_channel_token = jobj["line"]["channel_token"];
+    this->slack_channel_token = jobj["slack"]["channel_token"];
+    this->slack_send_channel = jobj["slack"]["send_channel"];
+    this->line_user_ids = jobj["line"]["user_ids"].get<std::vector<std::string>>();
     return true;
 }
