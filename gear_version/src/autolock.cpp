@@ -69,12 +69,17 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
     }
     if (level == 0)
     {
+        std::thread([]
+                    {
+            line.send_line_message(au_set.line_user_ids,"ドアが閉まりました");
+            slack.send_slack_message(au_set.slack_send_channel, "ドアが閉まりました"); })
+            .detach();
         if (!autolock.read_switch(level, DEBOUNCE_TIME_US))
         {
             std::thread([]
                         {
-                line.send_line_message(au_set.line_user_ids,"ドアが閉まりました");
-                slack.send_slack_message(au_set.slack_send_channel, "ドアが閉まりました"); })
+                line.send_line_message(au_set.line_user_ids,"施錠しました");
+                slack.send_slack_message(au_set.slack_send_channel, "施錠しました"); })
                 .detach();
             last_rsw_exe_time = time_time(); // 最終処理時刻の更新
         }

@@ -37,7 +37,8 @@
   ソースは `gear_version` 以下
 
 - **セットアップ**
-下記コマンドを実行すれば以下の処理や設定が全て行われる
+  下記コマンドを実行すれば以下の処理や設定が全て行われる
+
 ```
 cd gear_version
 mkdir build
@@ -48,29 +49,37 @@ cd ..
 sudo setup.sh
 ```
 
-- 依存関係`pigpio`,`mosquitto`,`libmosquitto-dev`  
+- 依存関係
+  `pigpio`,`mosquitto`,`libmosquitto-dev`,`libcurl4-openssl-dev`  
   json は[nlohmann/json](https://github.com/nlohmann/json)ライブラリを使用
-
-- `/etc/mosquitto/mosquitto.conf`を変更し、mqtt のポート設定と外部からのアクセス許可をする
+  curl は LINE,Slack の API で使用するため、API を使用しない場合は不要
 
 - 実行ファイル
-　バイナリは`gear_version/bin`に生成される
-  各種テストコードはビルドディレクトリのsrc/test_code内
-
-- ライブラリ：
-  lib内に配置される`control_servo`,`min_mqtt`と`nlohmann/json`,`pigpiod_if2`,`mosquitto`をリンクする
-
-- systemd に autolock のプログラムを登録し自動起動を設定する
+  バイナリは`gear_version/bin`に生成される
+  systemd に autolock のプログラムを登録することで自動起動させることができる
   Unit ファイルは`gear_version/service/autolock.service`である
-  バイナリのあるディレクトリに修正する必要あり
+  実行プログラムのパスをバイナリのあるディレクトリに修正する必要あり
+
+- 設定関係
+  `gear_version/etc/autolock_setting.json`で各種設定を行う
+  以下の各項目について設定が可能である
+  MQTT は開錠・施錠・リレー制御のトピック、メッセージ、mqtt ポート、ブローカー ip
+  LINE はチャンネルのアクセストークン、送信先ユーザー ID
+  Slack はチャンネルのアクセストークン、送信先のチャンネル名
+  `/etc/mosquitto/mosquitto.conf`を変更し、mqtt のポート設定と外部からのアクセス許可をする必要あり
+
+- ライブラリ
+  　外部ライブラリとして`nlohmann/json`,`pigpiod_if2`,`mosquitto`
+  独自ライブラリとして`control_servo`,`min_mqtt`,`autolock_setting`,`line_api`,`slack_api`がある、これらはビルドすると`gear_version/lib`内に配置される
+  `line_api`,`slack_api`は LINE と Slack に通知をするライブラリである
+
+- テストコード
+  各種テストコードのビルド先はビルドディレクトリの`src/test_code`内
+  `line_test`と`slack_test`はアクセストークンと送信先をソース内を変更して設定する必要がある
+  `gear_version/src/test_code`内にすべてのソースコードがある
+  作者の環境ではラズパイとモーターの電源は別で取っているので、モーターの動作が不安定になった場合に備えリレーで電源を制御している
+  `reray_on`,`reray_off` でそれぞれ電源の入切が可能である
 
 - サーボモーター MG996R の使用を前提としたギアボックスの 3DCAD データ(stl 形式)は 3D_Models 以下にある
 
 - Eagle で作成した基板データ（board・schematic）は Board_data 以下にある
-
-- mqtt でメッセージを送ることでも、施錠・開錠が可能である  
-  現バージョンでは指定したトピックに"1"というメッセージを送ると動作する  
-  `gear_version/etc/autolock_setting.json`に各種設定を書き込む
-
-- 作者の環境ではラズパイとモーターの電源は別で取っているので、モーターの動作が不安定になった場合に備えリレーで電源を制御している
-  reray_on.cpp/reray_off.cpp でそれぞれ電源の入切が可能である
