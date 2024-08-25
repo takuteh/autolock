@@ -49,35 +49,35 @@ cd ..
 sudo setup.sh
 ```
 
-- 依存関係
+- **依存関係**  
   `pigpio`,`mosquitto`,`libmosquitto-dev`,`libcurl4-openssl-dev`  
-  json は[nlohmann/json](https://github.com/nlohmann/json)ライブラリを使用
+  json は[nlohmann/json](https://github.com/nlohmann/json)ライブラリを使用  
   curl は LINE,Slack の API で使用するため、API を使用しない場合は不要
 
-- 実行ファイル
-  バイナリは`gear_version/bin`に生成される
-  systemd に autolock のプログラムを登録することで自動起動させることができる
-  Unit ファイルは`gear_version/service/autolock.service`である
+- **実行ファイル**  
+  バイナリは`gear_version/bin`に生成される  
+  systemd に autolock のプログラムを登録することで自動起動させることができる  
+  Unit ファイルは`gear_version/service/autolock.service`である  
   実行プログラムのパスをバイナリのあるディレクトリに修正する必要あり
 
-- 設定関係
-  `gear_version/etc/autolock_setting.json`で各種設定を行う
-  以下の各項目について設定が可能である
-  MQTT は開錠・施錠・リレー制御のトピック、メッセージ、mqtt ポート、ブローカー ip
-  LINE はチャンネルのアクセストークン、送信先ユーザー ID
-  Slack はチャンネルのアクセストークン、送信先のチャンネル名
+- **設定関係**  
+  `gear_version/etc/autolock_setting.json`で各種設定を行う  
+  以下の各項目について設定が可能である  
+  MQTT は開錠・施錠・リレー制御のトピック、メッセージ、mqtt ポート、ブローカー ip  
+  LINE はチャンネルのアクセストークン、送信先ユーザー ID  
+  Slack はチャンネルのアクセストークン、送信先のチャンネル名  
   `/etc/mosquitto/mosquitto.conf`を変更し、mqtt のポート設定と外部からのアクセス許可をする必要あり
 
-- ライブラリ
-  　外部ライブラリとして`nlohmann/json`,`pigpiod_if2`,`mosquitto`
-  独自ライブラリとして`control_servo`,`min_mqtt`,`autolock_setting`,`line_api`,`slack_api`がある、これらはビルドすると`gear_version/lib`内に配置される
+- **ライブラリ**  
+  外部ライブラリとして`nlohmann/json`,`pigpiod_if2`,`mosquitto`  
+  独自ライブラリとして`control_servo`,`min_mqtt`,`autolock_setting`,`line_api`,`slack_api`がある、これらはビルドすると`gear_version/lib`内に配置される  
   `line_api`,`slack_api`は LINE と Slack に通知をするライブラリである
 
-- テストコード
-  各種テストコードのビルド先はビルドディレクトリの`src/test_code`内
-  `line_test`と`slack_test`はアクセストークンと送信先をソース内を変更して設定する必要がある
-  `gear_version/src/test_code`内にすべてのソースコードがある
-  作者の環境ではラズパイとモーターの電源は別で取っているので、モーターの動作が不安定になった場合に備えリレーで電源を制御している
+- **テストコード**  
+  各種テストコードのビルド先はビルドディレクトリの`src/test_code`内  
+  `line_test`と`slack_test`はアクセストークンと送信先をソース内を変更して設定する必要がある  
+  `gear_version/src/test_code`内にすべてのソースコードがある  
+  作者の環境ではラズパイとモーターの電源は別で取っているので、モーターの動作が不安定になった場合に備えリレーで電源を制御している  
   `reray_on`,`reray_off` でそれぞれ電源の入切が可能である
 
 - サーボモーター MG996R の使用を前提としたギアボックスの 3DCAD データ(stl 形式)は 3D_Models 以下にある
