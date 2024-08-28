@@ -5,7 +5,7 @@
 #include <string.h>
 #include <thread>
 #include <ctime>
-
+#include <nlohmann/json.hpp>
 // 独自ライブラリ
 #include <control_servo.h>
 #include <min_mqtt.h>
@@ -104,39 +104,49 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     std::string topic_str = message->topic;
     std::string payload_str = (char *)message->payload;
     std::cout << topic_str << std::endl;
-    if (topic_str == au_set.open_topic && payload_str == au_set.open_message)
+    nlohmann::json mqtt_mes = nlohmann::json::parse(payload_str);
+
+    // 送信メッセージ定義
+    std::string send_str = "";
+    std::string app = mqtt_mes.value("app", "MQTT");
+    std::string user = mqtt_mes.value("user", "Unknown");
+    std::string operate_mes = mqtt_mes.value("message", "null");
+    std::string operation = "";
+
+    bool send_flag = false; // 送信フラグ
+
+    if (topic_str == au_set.open_topic && operate_mes == au_set.open_message)
     {
         autolock.open_switch(1, DEBOUNCE_TIME_US);
         cl_flag = true;
-        std::thread([]
-                    {
-        line.send_line_message(au_set.line_user_ids, "MQTTで開錠しました");
-        slack.send_slack_message(au_set.slack_send_channel, "MQTTで開錠しました"); })
-            .detach();
+        send_flag = true;
+        operation = "解錠";
     }
 
-    if (topic_str == au_set.close_topic && payload_str == au_set.close_message)
+    if (topic_str == au_set.close_topic && operate_mes == au_set.close_message)
     {
         autolock.close_switch(1, DEBOUNCE_TIME_US);
         cl_flag = false;
-        std::thread([]
-                    {
-        line.send_line_message(au_set.line_user_ids, "MQTTで施錠しました");
-        slack.send_slack_message(au_set.slack_send_channel, "MQTTで施錠しました"); })
-            .detach();
+        send_flag = true;
+        operation = "施錠";
     }
 
-    if (topic_str == au_set.relay_topic && payload_str == au_set.relay_message)
+    if (topic_str == au_set.relay_topic && operate_mes == au_set.relay_message)
     {
         std::cout << "relay" << std::endl;
         gpio_write(pi, RELAY, 1);
         sleep(1);
         gpio_write(pi, RELAY, 0);
-        std::thread([]
-                    {
-        line.send_line_message(au_set.line_user_ids, "MQTTでモーターのリセットをしました");
-        slack.send_slack_message(au_set.slack_send_channel, "MQTTでモーターのリセットをしました"); })
-            .detach();
+        send_flag = true;
+        operation = "モーターリセット";
+    }
+
+    if (send_flag)
+    {
+        send_str = user + "が" + app + "で" + operation + "しました";
+        line.send_line_message(au_set.line_user_ids, send_str);
+        slack.send_slack_message(au_set.slack_send_channel, send_str);
+        send_flag = false;
     }
 }
 
