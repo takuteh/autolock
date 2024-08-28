@@ -83,3 +83,73 @@ sudo setup.sh
 - サーボモーター MG996R の使用を前提としたギアボックスの 3DCAD データ(stl 形式)は 3D_Models 以下にある
 
 - Eagle で作成した基板データ（board・schematic）は Board_data 以下にある
+
+## ディレクトリ構成
+
+<pre>
+autolock/
+├── 3D_Models
+│   ├── GearBox_Base.stl
+│   ├── GearBox_Lid.stl
+│   ├── Gear_KeySide.stl
+│   ├── Gear_MotorSide.stl
+│   ├── lock_raspibase v10.stl
+│   └── lock_raspilid v8.stl
+├── Board_data
+│   ├── autolock.brd
+│   └── autolock.sch
+├── README.md
+├── direct_version
+│   ├── C
+│   │   ├── Makefile
+│   │   ├── close.c
+│   │   └── open.c
+│   ├── C++
+│   │   ├── src
+│   │   │   ├── auto_lock.cpp
+│   │   │   ├── auto_lock.hpp
+│   │   │   ├── switch.cpp
+│   │   │   └── switch.hpp
+│   │   ├── test
+│   │   └── test.cpp
+│   ├── Python
+│   │   ├── direct_lock.service
+│   │   ├── main.py
+│   │   └── read_idm.py
+│   └── README.txt
+└── gear_version
+    ├── CMakeLists.txt             :全体のビルド用
+    ├── etc
+    │   └── autolock_setting.json :設定ファイル
+    ├── include                 
+    │   ├── autolock_setting.h
+    │   ├── control_servo.h
+    │   ├── line_api.h
+    │   ├── min_mqtt.h
+    │   └── slack_api.h
+    ├── service
+    │   └── autolock.service    :systemdのserviceファイル
+    ├── setup.sh                 :初回ビルド前に実行するスクリプト
+    └── src
+        ├── autolock.cpp         :メインのコード
+        ├── autolock_setting.cpp :設定ファイルの読込
+        ├── control_servo.cpp    :サーボモーター制御
+        ├── line_api.cpp         :LINEへ送信する
+        ├── min_mqtt.cpp         :MQTT関連の制御・設定
+        ├── slack_api.cpp        :Slackへ送信
+        ├── test_code            :デバッグ用コード
+        │   ├── CMakeLists.txt  :test_codeのビルド用
+        │   ├── down_close.c
+        │   ├── down_open.c
+        │   ├── line_test.cpp
+        │   ├── read_sw.cpp
+        │   ├── relay_off.cpp
+        │   ├── relay_on.cpp
+        │   ├── slack_test.cpp
+        │   ├── up_close.c
+        │   └── up_open.c
+        └── wiringPi_ver
+            ├── home_close.c
+            ├── home_open.c
+            └── lock_open.c
+</pre>
