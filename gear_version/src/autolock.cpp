@@ -21,6 +21,7 @@
 #define DEBOUNCE_TIME_US 1.5
 #define TIMER_INTERVAL 300
 
+bool cl_flag = false; // 施錠フラグ
 std::string setting_file = SETTING_FILE;
 
 int pi = pigpio_start(nullptr, nullptr);
@@ -39,6 +40,7 @@ void open_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
 {
     if (!autolock.open_switch(level, DEBOUNCE_TIME_US))
     {
+        cl_flag = true;
         std::thread([]
                     { 
             line.send_line_message(au_set.line_user_ids,"ボタンで解錠しました");
@@ -51,6 +53,7 @@ void close_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
 {
     if (!autolock.close_switch(level, DEBOUNCE_TIME_US))
     {
+        cl_flag = false;
         std::thread([]
                     { 
             line.send_line_message(au_set.line_user_ids,"ボタンで施錠しました");
@@ -76,6 +79,7 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
             .detach();
         if (!autolock.read_switch(level, DEBOUNCE_TIME_US))
         {
+            cl_flag = false;
             std::thread([]
                         {
                 line.send_line_message(au_set.line_user_ids,"施錠しました");
@@ -103,6 +107,7 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     if (topic_str == au_set.open_topic && payload_str == au_set.open_message)
     {
         autolock.open_switch(1, DEBOUNCE_TIME_US);
+        cl_flag = true;
         std::thread([]
                     {
         line.send_line_message(au_set.line_user_ids, "MQTTで開錠しました");
@@ -113,6 +118,7 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     if (topic_str == au_set.close_topic && payload_str == au_set.close_message)
     {
         autolock.close_switch(1, DEBOUNCE_TIME_US);
+        cl_flag = false;
         std::thread([]
                     {
         line.send_line_message(au_set.line_user_ids, "MQTTで施錠しました");
@@ -164,12 +170,14 @@ int main()
         autolock.current_rsw_time = time_time();
         auto elapsed_rsw_time = autolock.current_rsw_time - autolock.start_rsw_time;
         // 鍵が開きっぱなしにならないための処理
-        if (elapsed_rsw_time >= TIMER_INTERVAL && elapsed_rsw_time <= TIMER_INTERVAL + 0.5)
+        if (cl_flag == true && elapsed_rsw_time >= TIMER_INTERVAL)
         {
+            // ドアが閉まっているかの確認
             if (gpio_read(pi, RE_SW) == 0)
             {
                 std::cout << "door_closed" << std::endl;
                 autolock.close(19, 6);
+                cl_flag = false;
                 std::thread([]
                             {
                 line.send_line_message(au_set.line_user_ids, "タイムアウトしたため施錠しました");
