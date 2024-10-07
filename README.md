@@ -82,7 +82,7 @@ sudo setup.sh
 
 - サーボモーター MG996R の使用を前提としたギアボックスの 3DCAD データ(stl 形式)は 3D_Models 以下にある
 
-- Eagle で作成した基板データ（board・schematic）は Board_data 以下にある
+- Eagle で作成した基板データ（board・schematic）は pcb_data 以下にある
 
 ## ディレクトリ構成
 
