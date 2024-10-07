@@ -95,7 +95,7 @@ autolock/
 │   ├── Gear_MotorSide.stl
 │   ├── lock_raspibase v10.stl
 │   └── lock_raspilid v8.stl
-├── Board_data
+├── pcb_data
 │   ├── autolock.brd
 │   └── autolock.sch
 ├── README.md
