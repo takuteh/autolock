@@ -1,6 +1,6 @@
 [Unit]
 Description=autolock
-After=pigpiod.service
+After=pigpiod.service mosquitto.service
 
 [Service]
 Type=simple
