@@ -82,22 +82,16 @@ sudo setup.sh
 
 - サーボモーター MG996R の使用を前提としたギアボックスの 3DCAD データ(stl 形式)は 3D_Models 以下にある
 
-- Eagle で作成した基板データ（board・schematic）は pcb_data 以下にある
+- Eagle で作成した基板データは pcb_data 以下にある([説明](https://github.com/takuteh/autolock/blob/main/pcb_data/READMD.md))
 
 ## ディレクトリ構成
-
+※一部省略
 <pre>
 autolock/
 ├── 3D_Models
-│   ├── GearBox_Base.stl
-│   ├── GearBox_Lid.stl
-│   ├── Gear_KeySide.stl
-│   ├── Gear_MotorSide.stl
-│   ├── lock_raspibase v10.stl
-│   └── lock_raspilid v8.stl
+│   └── ...
 ├── pcb_data
-│   ├── autolock.brd
-│   └── autolock.sch
+│   └── ...
 ├── README.md
 ├── direct_version
 │   ├── C
