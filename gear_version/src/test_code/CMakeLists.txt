@@ -32,6 +32,9 @@ target_link_libraries(down_close ${PIGPIO})
 add_executable(relay_on relay_on.cpp)
 target_link_libraries(relay_on ${PIGPIO})
 
+add_executable(relay_off relay_off.cpp)
+target_link_libraries(relay_off ${PIGPIO})
+
 #ドア開閉用リードセンサーテスト GPIO_3
 add_executable(read_sw read_sw.cpp)
 target_link_libraries(read_sw ${PIGPIO})
