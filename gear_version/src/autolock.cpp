@@ -43,7 +43,7 @@ void open_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
         cl_flag = true;
         std::thread([]
                     { 
-            line.send_line_message(au_set.line_user_ids,"ボタンで解錠しました");
+            //line.send_line_message(au_set.line_user_ids,"ボタンで解錠しました");
             slack.send_slack_message(au_set.slack_send_channel, "ボタンで解錠しました"); })
             .detach();
     }
@@ -56,48 +56,48 @@ void close_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
         cl_flag = false;
         std::thread([]
                     { 
-            line.send_line_message(au_set.line_user_ids,"ボタンで施錠しました");
+            //line.send_line_message(au_set.line_user_ids,"ボタンで施錠しました");
             slack.send_slack_message(au_set.slack_send_channel, "ボタンで施錠しました"); })
             .detach();
     }
 }
 
-void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
-{
-    current_rsw_call_time = time_time(); // 現在時刻の更新
-    // 直前のボタンの押下から一定時間が経過していない場合は無視する
-    if (current_rsw_call_time - last_rsw_exe_time < DEBOUNCE_TIME_US)
-    {
-        return;
-    }
-    if (level == 0)
-    {
-        std::thread([]
-                    {
-            line.send_line_message(au_set.line_user_ids,"ドアが閉まりました");
-            slack.send_slack_message(au_set.slack_send_channel, "ドアが閉まりました"); })
-            .detach();
-        if (!autolock.read_switch(level, DEBOUNCE_TIME_US))
-        {
-            cl_flag = false;
-            std::thread([]
-                        {
-                line.send_line_message(au_set.line_user_ids,"施錠しました");
-                slack.send_slack_message(au_set.slack_send_channel, "施錠しました"); })
-                .detach();
-            last_rsw_exe_time = time_time(); // 最終処理時刻の更新
-        }
-    }
-    else if (level == 1)
-    {
-        std::thread([]
-                    { 
-            line.send_line_message(au_set.line_user_ids,"ドアが開きました");
-            slack.send_slack_message(au_set.slack_send_channel, "ドアが開きました"); })
-            .detach();
-        last_rsw_exe_time = time_time(); // 最終処理時刻の更新
-    }
-}
+// void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
+//{
+//     current_rsw_call_time = time_time(); // 現在時刻の更新
+//  直前のボタンの押下から一定時間が経過していない場合は無視する
+//    if (current_rsw_call_time - last_rsw_exe_time < DEBOUNCE_TIME_US)
+//    {
+//        return;
+//    }
+//     if (level == 0)
+//     {
+//         std::thread([]
+//                     {
+//             //line.send_line_message(au_set.line_user_ids,"ドアが閉まりました");
+//             slack.send_slack_message(au_set.slack_send_channel, "ドアが閉まりました"); })
+//             .detach();
+//         if (!autolock.read_switch(level, DEBOUNCE_TIME_US))
+//         {
+//             cl_flag = false;
+//             std::thread([]
+//                         {
+//                 //line.send_line_message(au_set.line_user_ids,"施錠しました");
+//                 slack.send_slack_message(au_set.slack_send_channel, "施錠しました"); })
+//                 .detach();
+//             last_rsw_exe_time = time_time(); // 最終処理時刻の更新
+//         }
+//     }
+//     else if (level == 1)
+//     {
+//         std::thread([]
+//                     {
+//             //line.send_line_message(au_set.line_user_ids,"ドアが開きました");
+//             slack.send_slack_message(au_set.slack_send_channel, "ドアが開きました"); })
+//             .detach();
+//         last_rsw_exe_time = time_time(); // 最終処理時刻の更新
+//     }
+// }
 
 void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message)
 {
@@ -144,7 +144,7 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     if (send_flag)
     {
         send_str = user + "が" + app + "で" + operation + "しました";
-        line.send_line_message(au_set.line_user_ids, send_str);
+        // line.send_line_message(au_set.line_user_ids, send_str);
         slack.send_slack_message(au_set.slack_send_channel, send_str);
         send_flag = false;
     }
@@ -172,29 +172,29 @@ int main()
     // ボタン割り込みのコールバック関数設定
     callback(pi, OP_SW, RISING_EDGE, open_sw);
     callback(pi, CL_SW, RISING_EDGE, close_sw);
-    callback(pi, RE_SW, EITHER_EDGE, read_sw);
+    // callback(pi, RE_SW, EITHER_EDGE, read_sw);
 
     mosquitto_loop_start(mqtt.mosq);
     while (1)
     {
-        autolock.current_rsw_time = time_time();
-        auto elapsed_rsw_time = autolock.current_rsw_time - autolock.start_rsw_time;
-        // 鍵が開きっぱなしにならないための処理
-        if (cl_flag == true && elapsed_rsw_time >= TIMER_INTERVAL)
-        {
-            // ドアが閉まっているかの確認
-            if (gpio_read(pi, RE_SW) == 0)
-            {
-                std::cout << "door_closed" << std::endl;
-                autolock.close(19, 6);
-                cl_flag = false;
-                std::thread([]
-                            {
-                line.send_line_message(au_set.line_user_ids, "タイムアウトしたため施錠しました");
-                slack.send_slack_message(au_set.slack_send_channel, "タイムアウトしたため施錠しました"); })
-                    .detach();
-            }
-        }
+        // autolock.current_rsw_time = time_time();
+        // auto elapsed_rsw_time = autolock.current_rsw_time - autolock.start_rsw_time;
+        // // 鍵が開きっぱなしにならないための処理
+        // if (cl_flag == true && elapsed_rsw_time >= TIMER_INTERVAL)
+        // {
+        //     // ドアが閉まっているかの確認
+        //     if (gpio_read(pi, RE_SW) == 0)
+        //     {
+        //         std::cout << "door_closed" << std::endl;
+        //         autolock.close(19, 6);
+        //         cl_flag = false;
+        //         std::thread([]
+        //                     {
+        //         //line.send_line_message(au_set.line_user_ids, "タイムアウトしたため施錠しました");
+        //         slack.send_slack_message(au_set.slack_send_channel, "タイムアウトしたため施錠しました"); })
+        //             .detach();
+        //     }
+        // }
         sleep(1);
         std::cout << gpio_read(pi, RE_SW) << std::endl;
     }
