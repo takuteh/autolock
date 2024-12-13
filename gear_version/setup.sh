@@ -43,7 +43,7 @@ echo "Mqtt listener port is" $MQTT_PORT
 if ! grep -q "mqtt_port" $WD/etc/autolock_setting.json; then
     echo "mqtt_port:$MQTT_PORT" >> $WD/etc/autolock_setting.json
 else 
-    sed -i "s/\"mqtt_port\":[0-9]*/\"mqtt_port\":$MQTT_PORT/" $WD/etc/autolock_setting.json
+    sed -i "s|\"mqtt_port\":[0-9]*|\"mqtt_port\":$MQTT_PORT|" $WD/etc/autolock_setting.json
 fi
 
 
