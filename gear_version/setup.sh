@@ -20,7 +20,7 @@ ask_yes_no() {
 
 WD=$(pwd)
 #パッケージインストール
-apt install pigpio mosquitto libmosquitto-dev libcurl4-openssl-dev
+apt install -y cmake pigpio mosquitto libmosquitto-dev libcurl4-openssl-dev
 
 #mqtt設定
 MQTT_CONFIG="/etc/mosquitto/mosquitto.conf"
