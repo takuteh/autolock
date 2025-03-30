@@ -63,6 +63,7 @@ sudo setup.sh
 - **設定関係**  
   `gear_version/etc/autolock_setting.json`で各種設定を行う  
   以下の各項目について設定が可能である  
+  メインの動作設定は未施錠の場合のタイムアウト秒数,施錠までの秒数を設定する,"no"とすれば無制限  
   MQTT は開錠・施錠・リレー制御のトピック、メッセージ、mqtt ポート、ブローカー ip  
   LINE はチャンネルのアクセストークン、送信先ユーザー ID  
   Slack はチャンネルのアクセストークン、送信先のチャンネル名  
@@ -85,7 +86,9 @@ sudo setup.sh
 - Eagle で作成した基板データは pcb_data 以下にある([説明](https://github.com/takuteh/autolock/blob/main/pcb_data/READMD.md))
 
 ## ディレクトリ構成
+
 ※一部省略
+
 <pre>
 autolock/
 ├── 3D_Models

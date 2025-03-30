@@ -12,6 +12,7 @@ public:
     const char *close_topic;
     const char *relay_topic;
     int mqtt_port;
+    std::string timeout_seq;
     std::string open_message;
     std::string close_message;
     std::string relay_message;

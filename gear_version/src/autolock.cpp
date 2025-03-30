@@ -6,6 +6,7 @@
 #include <thread>
 #include <ctime>
 #include <nlohmann/json.hpp>
+#include<limits>
 // 独自ライブラリ
 #include <control_servo.h>
 #include <min_mqtt.h>
@@ -19,11 +20,10 @@
 #define RELAY 22
 
 #define DEBOUNCE_TIME_US 1.5
-#define TIMER_INTERVAL 300
 
 bool cl_flag = false; // 施錠フラグ
 std::string setting_file = SETTING_FILE;
-
+int timeout_seq;
 int pi = pigpio_start(nullptr, nullptr);
 CONTROL_SERVO autolock(pi);
 
@@ -180,19 +180,22 @@ int main()
         autolock.current_rsw_time = time_time();
         auto elapsed_rsw_time = autolock.current_rsw_time - autolock.start_rsw_time;
         // 鍵が開きっぱなしにならないための処理
-        if (cl_flag == true && elapsed_rsw_time >= TIMER_INTERVAL)
-        {
-            // ドアが閉まっているかの確認
-            if (gpio_read(pi, RE_SW) == 0)
+        if (au_set.timeout_seq != "no"){
+            timeout_seq=stoi(au_set.timeout_seq);
+            if (cl_flag == true && elapsed_rsw_time >= timeout_seq)
             {
-                std::cout << "door_closed" << std::endl;
-                autolock.close(19, 6);
-                cl_flag = false;
-                std::thread([]
-                            {
-                //line.send_line_message(au_set.line_user_ids, "タイムアウトしたため施錠しました");
-                slack.send_slack_message(au_set.slack_send_channel, "タイムアウトしたため施錠しました"); })
-                    .detach();
+                // ドアが閉まっているかの確認
+                if (gpio_read(pi, RE_SW) == 0)
+                {
+                    std::cout << "door_closed" << std::endl;
+                    autolock.close(19, 6);
+                    cl_flag = false;
+                    std::thread([]
+                                {
+                    //line.send_line_message(au_set.line_user_ids, "タイムアウトしたため施錠しました");
+                    slack.send_slack_message(au_set.slack_send_channel, "タイムアウトしたため施錠しました"); })
+                        .detach();
+                }
             }
         }
         sleep(1);
