@@ -10,6 +10,8 @@ find_library(PIGPIO pigpiod_if2)
 find_library(MQTT mosquitto)
 find_library(CURL curl)
 
+find_package(Threads REQUIRED)
+
 #生成ライブラリの出力先
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CURRENT_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CURRENT_DIR}/lib)
@@ -35,6 +37,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE SETTING_FILE="${CURRENT_DIR}/
 
 #ライブラリのリンク
 target_link_libraries(${PROJECT_NAME}
+	PRIVATE Threads::Threads
 	${PIGPIO}
 	${MQTT}
 	${MY_LIBRARY}
