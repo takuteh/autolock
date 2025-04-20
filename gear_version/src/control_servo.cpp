@@ -5,9 +5,10 @@
 
 #define RE_SW 3
 
-CONTROL_SERVO::CONTROL_SERVO(int pi)
+CONTROL_SERVO::CONTROL_SERVO(int pi, std::string rotate_direction)
 {
     this->pi = pi;
+    this->rotate_direction = rotate_direction;
 }
 
 CONTROL_SERVO::~CONTROL_SERVO()
@@ -15,7 +16,20 @@ CONTROL_SERVO::~CONTROL_SERVO()
     pigpio_stop(this->pi);
 }
 
-void CONTROL_SERVO::open(int gpio_pin1, int gpio_pin2)
+// モーターを右方向に回転させる
+void CONTROL_SERVO::rotate_right(int gpio_pin1, int gpio_pin2)
+{
+    set_servo_pulsewidth(this->pi, gpio_pin1, 1500);
+    set_servo_pulsewidth(this->pi, gpio_pin2, 1500);
+    usleep(100000);
+    set_servo_pulsewidth(this->pi, gpio_pin1, 500);
+    set_servo_pulsewidth(this->pi, gpio_pin2, 500);
+    usleep(800000);
+    set_servo_pulsewidth(this->pi, gpio_pin1, 1500);
+    set_servo_pulsewidth(this->pi, gpio_pin2, 1500);
+}
+// モーターを左方向に回転させる
+void CONTROL_SERVO::rotate_left(int gpio_pin1, int gpio_pin2)
 {
     set_servo_pulsewidth(this->pi, gpio_pin1, 1500);
     set_servo_pulsewidth(this->pi, gpio_pin2, 1500);
@@ -27,16 +41,28 @@ void CONTROL_SERVO::open(int gpio_pin1, int gpio_pin2)
     set_servo_pulsewidth(this->pi, gpio_pin2, 1500);
 }
 
+void CONTROL_SERVO::open(int gpio_pin1, int gpio_pin2)
+{
+    if (this->rotate_direction == "left")
+    {
+        this->rotate_left(gpio_pin1, gpio_pin2);
+    }
+    else if (this->rotate_direction == "right")
+    {
+        this->rotate_right(gpio_pin1, gpio_pin2);
+    }
+}
+
 void CONTROL_SERVO::close(int gpio_pin1, int gpio_pin2)
 {
-    set_servo_pulsewidth(this->pi, gpio_pin1, 1500);
-    set_servo_pulsewidth(this->pi, gpio_pin2, 1500);
-    usleep(100000);
-    set_servo_pulsewidth(this->pi, gpio_pin1, 500);
-    set_servo_pulsewidth(this->pi, gpio_pin2, 500);
-    usleep(800000);
-    set_servo_pulsewidth(this->pi, gpio_pin1, 1500);
-    set_servo_pulsewidth(this->pi, gpio_pin2, 1500);
+    if (this->rotate_direction == "left")
+    {
+        this->rotate_right(gpio_pin1, gpio_pin2);
+    }
+    else if (this->rotate_direction == "right")
+    {
+        this->rotate_left(gpio_pin1, gpio_pin2);
+    }
 }
 
 int CONTROL_SERVO::open_switch(unsigned level, float debounce_time)

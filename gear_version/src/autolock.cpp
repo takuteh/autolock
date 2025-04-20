@@ -6,7 +6,7 @@
 #include <thread>
 #include <ctime>
 #include <nlohmann/json.hpp>
-#include<limits>
+#include <limits>
 // 独自ライブラリ
 #include <control_servo.h>
 #include <min_mqtt.h>
@@ -25,9 +25,9 @@ bool cl_flag = false; // 施錠フラグ
 std::string setting_file = SETTING_FILE;
 int timeout_seq;
 int pi = pigpio_start(nullptr, nullptr);
-CONTROL_SERVO autolock(pi);
 
 autolock_setting au_set(setting_file);
+CONTROL_SERVO autolock(pi, au_set.rotate_direction);
 
 Mqtt mqtt;
 line_api line(au_set.line_channel_token);
@@ -180,8 +180,9 @@ int main()
         autolock.current_rsw_time = time_time();
         auto elapsed_rsw_time = autolock.current_rsw_time - autolock.start_rsw_time;
         // 鍵が開きっぱなしにならないための処理
-        if (au_set.timeout_seq != "no"){
-            timeout_seq=stoi(au_set.timeout_seq);
+        if (au_set.timeout_seq != "no")
+        {
+            timeout_seq = stoi(au_set.timeout_seq);
             if (cl_flag == true && elapsed_rsw_time >= timeout_seq)
             {
                 // ドアが閉まっているかの確認

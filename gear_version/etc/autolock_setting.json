@@ -1,6 +1,7 @@
 {
   "main": {
-    "timeout_seq": "no"
+    "timeout_seq": "no",
+    "rotate_direction": "left"
   },
   "mqtt": {
     "broker_address": "localhost",

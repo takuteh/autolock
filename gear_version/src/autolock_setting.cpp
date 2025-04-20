@@ -12,6 +12,7 @@ autolock_setting::autolock_setting(std::string setting_file)
 {
     this->setting_file = setting_file;
     // デフォルト値を設定
+    this->rotate_direction = "left";
     this->broker_address = "localhost";
     this->open_topic = "/door/open";
     this->close_topic = "/door/close";
@@ -61,6 +62,7 @@ bool autolock_setting::load_setting()
     this->close_topic = this->Close_topic.c_str();
     this->relay_topic = this->Relay_topic.c_str();
 
+    this->rotate_direction = jobj["main"]["rotate_direction"];
     this->timeout_seq = jobj["main"]["timeout_seq"];
     this->open_message = jobj["mqtt"]["open_message"];
     this->close_message = jobj["mqtt"]["close_message"];
