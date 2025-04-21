@@ -39,15 +39,15 @@
 - **セットアップ**
   下記コマンドを実行すれば以下の処理や設定が全て行われる
 
-```
-cd gear_version
-mkdir build
-cd build
-cmake ..
-make
-cd ..
-sudo setup.sh
-```
+  ```
+  cd gear_version
+  mkdir build
+  cd build
+  cmake ..
+  make
+  cd ..
+  sudo setup.sh
+  ```
 
 - **依存関係**  
   `pigpio`,`mosquitto`,`libmosquitto-dev`,`libcurl4-openssl-dev`  
@@ -62,12 +62,14 @@ sudo setup.sh
 
 - **設定関係**  
   `gear_version/etc/autolock_setting.json`で各種設定を行う  
-  以下の各項目について設定が可能である  
-  メインの動作設定は未施錠の場合のタイムアウト秒数,施錠までの秒数を設定する,"no"とすれば無制限  
-  MQTT は開錠・施錠・リレー制御のトピック、メッセージ、mqtt ポート、ブローカー ip  
-  LINE はチャンネルのアクセストークン、送信先ユーザー ID  
-  Slack はチャンネルのアクセストークン、送信先のチャンネル名  
-  `/etc/mosquitto/mosquitto.conf`を変更し、mqtt のポート設定と外部からのアクセス許可をする必要あり
+  以下の各項目について設定が可能である
+
+  - メインの動作設定はオートロックの有無効,ドアの開放時の閉ボタンの動作,鍵の回転方向
+    未施錠の場合のタイムアウト秒数,施錠までの秒数を設定する,"no"とすれば無制限
+  - MQTT は開錠・施錠・リレー制御のトピック、メッセージ、mqtt ポート、ブローカー ip
+  - LINE はチャンネルのアクセストークン、送信先ユーザー ID
+  - Slack はチャンネルのアクセストークン、送信先のチャンネル名
+  - `/etc/mosquitto/mosquitto.conf`を変更し、mqtt のポート設定と外部からのアクセス許可をする必要あり
 
 - **ライブラリ**  
   外部ライブラリとして`nlohmann/json`,`pigpiod_if2`,`mosquitto`  
@@ -84,6 +86,31 @@ sudo setup.sh
 - サーボモーター MG996R の使用を前提としたギアボックスの 3DCAD データ(stl 形式)は 3D_Models 以下にある
 
 - Eagle で作成した基板データは pcb_data 以下にある([説明](https://github.com/takuteh/autolock/blob/main/pcb_data/READMD.md))
+
+- **API**
+  オートロックの内部 API として MQTT を利用している.
+  以下の例のように json 形式でブローカーに目的の動作のトピック名を指定し,メッセージ送信を行う．
+  **フルメッセージ**
+
+  ```
+  {"app":"LINE","message":"1","user":"takuteh"}
+  ```
+
+  app,user 要素は，それぞれ通知を行う際にどのアプリから制御を行なったか，誰が操作をしたのかを判別することが可能．
+  上記の例で`/door/open`トピックに送信すると`「takutehがLINEで開錠しました」`という通知が行われる.message 要素は必須だが，それ以外は指定しなくても動作する．
+  **最小構成のメッセージ**
+
+  ```
+  {"message":"1"}
+  ```
+
+  「unknown が MQTT で開錠しました」という通知が行われる.
+
+  **mosquitto での送信例(broker ip 192.168.1.1 の場合)**
+
+  ```
+  mosquitto_pub -h 192.168.1.1 -t "/door/open" -m '{"app":"LINE","message":"1","user":"takuteh"}'
+  ```
 
 ## ディレクトリ構成
 

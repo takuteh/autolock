@@ -1,9 +1,9 @@
 {
   "main": {
-    "autolock": "enable",
-    "ignore_clsw": "yes",
-    "timeout_seq": "no",
-    "rotate_direction": "left"
+    "autolock": "enable", //オートロックを有効にするか(enable/disable)
+    "ignore_clsw": "yes", //ドアが空いている場合に"閉"ボタンの押下を無視するか(yes/no)
+    "timeout_seq": "no", //鍵が未施錠のままになってる場合のロックまでの秒数(no/秒数)
+    "rotate_direction": "left" //鍵を開ける方向に回す際の回転方向(right/left)
   },
   "mqtt": {
     "broker_address": "localhost",
