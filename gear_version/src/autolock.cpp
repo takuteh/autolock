@@ -27,7 +27,7 @@ int timeout_seq;
 int pi = pigpio_start(nullptr, nullptr);
 
 autolock_setting au_set(setting_file);
-CONTROL_SERVO autolock(pi, au_set.rotate_direction);
+CONTROL_SERVO autolock(pi, &au_set);
 
 Mqtt mqtt;
 line_api line(au_set.line_channel_token);

@@ -5,10 +5,10 @@
 
 #define RE_SW 3
 
-CONTROL_SERVO::CONTROL_SERVO(int pi, std::string rotate_direction)
+CONTROL_SERVO::CONTROL_SERVO(int pi, autolock_setting *au_set)
 {
     this->pi = pi;
-    this->rotate_direction = rotate_direction;
+    this->au_set = au_set;
 }
 
 CONTROL_SERVO::~CONTROL_SERVO()
@@ -43,11 +43,11 @@ void CONTROL_SERVO::rotate_left(int gpio_pin1, int gpio_pin2)
 
 void CONTROL_SERVO::open(int gpio_pin1, int gpio_pin2)
 {
-    if (this->rotate_direction == "left")
+    if (this->au_set->rotate_direction == "left")
     {
         this->rotate_left(gpio_pin1, gpio_pin2);
     }
-    else if (this->rotate_direction == "right")
+    else if (this->au_set->rotate_direction == "right")
     {
         this->rotate_right(gpio_pin1, gpio_pin2);
     }
@@ -55,11 +55,11 @@ void CONTROL_SERVO::open(int gpio_pin1, int gpio_pin2)
 
 void CONTROL_SERVO::close(int gpio_pin1, int gpio_pin2)
 {
-    if (this->rotate_direction == "left")
+    if (this->au_set->rotate_direction == "left")
     {
         this->rotate_right(gpio_pin1, gpio_pin2);
     }
-    else if (this->rotate_direction == "right")
+    else if (this->au_set->rotate_direction == "right")
     {
         this->rotate_left(gpio_pin1, gpio_pin2);
     }
@@ -94,7 +94,7 @@ int CONTROL_SERVO::close_switch(unsigned level, float debounce_time)
     }
     if (level == 1)
     {
-        if (gpio_read(pi, RE_SW) == 1)
+        if (gpio_read(pi, RE_SW) == 1&& this->au_set->ignore_clsw == "yes")
         { // リードセンサーに反応がない場合無視する
             std::cout << "The door is open so ignore it" << std::endl;
             return 1;

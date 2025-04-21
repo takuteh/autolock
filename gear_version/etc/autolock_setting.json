@@ -1,6 +1,7 @@
 {
   "main": {
     "autolock": "enable",
+    "ignore_clsw": "yes",
     "timeout_seq": "no",
     "rotate_direction": "left"
   },

@@ -3,12 +3,13 @@
 #include <unistd.h>
 #include <ctime>
 #include <string>
+#include <autolock_setting.h>
 
 class CONTROL_SERVO
 {
 public:
     int pi;
-    CONTROL_SERVO(int pi, std::string);
+    CONTROL_SERVO(int pi, autolock_setting *au_set);
     ~CONTROL_SERVO();
     void open(int gpio_pin1, int gpio_pin2);
     void close(int gpio_pin1, int gpio_pin2);
@@ -23,6 +24,7 @@ public:
     int read_switch(unsigned level, float debounce_time);
 
 private:
+    autolock_setting *au_set;
     std::string rotate_direction;
     void rotate_right(int gpio_pin1, int gpio_pin2);
     void rotate_left(int gpio_pin1, int gpio_pin2);

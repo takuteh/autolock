@@ -14,6 +14,7 @@ public:
     int mqtt_port;
     std::string autolock;
     std::string rotate_direction;
+    std::string ignore_clsw;
     std::string timeout_seq;
     std::string open_message;
     std::string close_message;
