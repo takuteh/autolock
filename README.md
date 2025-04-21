@@ -87,19 +87,19 @@
 
 - Eagle で作成した基板データは pcb_data 以下にある([説明](https://github.com/takuteh/autolock/blob/main/pcb_data/READMD.md))
 
-- **API**
+- **API**  
   オートロックの内部 API として MQTT を利用している.
   以下の例のように json 形式でブローカーに目的の動作のトピック名を指定し,メッセージ送信を行う．
+  
   **フルメッセージ**
-
   ```
   {"app":"LINE","message":"1","user":"takuteh"}
   ```
 
   app,user 要素は，それぞれ通知を行う際にどのアプリから制御を行なったか，誰が操作をしたのかを判別することが可能．
-  上記の例で`/door/open`トピックに送信すると`「takutehがLINEで開錠しました」`という通知が行われる.message 要素は必須だが，それ以外は指定しなくても動作する．
+  上記の例で`/door/open`トピックに送信すると`「takutehがLINEで開錠しました」`という通知が行われる.message 要素は必須だが，それ以外は指定しなくても動作する.
+  
   **最小構成のメッセージ**
-
   ```
   {"message":"1"}
   ```
@@ -107,7 +107,6 @@
   「unknown が MQTT で開錠しました」という通知が行われる.
 
   **mosquitto での送信例(broker ip 192.168.1.1 の場合)**
-
   ```
   mosquitto_pub -h 192.168.1.1 -t "/door/open" -m '{"app":"LINE","message":"1","user":"takuteh"}'
   ```
