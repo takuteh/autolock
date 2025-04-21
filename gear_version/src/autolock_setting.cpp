@@ -62,6 +62,7 @@ bool autolock_setting::load_setting()
     this->close_topic = this->Close_topic.c_str();
     this->relay_topic = this->Relay_topic.c_str();
 
+    this->autolock = jobj["main"]["autolock"];
     this->rotate_direction = jobj["main"]["rotate_direction"];
     this->timeout_seq = jobj["main"]["timeout_seq"];
     this->open_message = jobj["mqtt"]["open_message"];

@@ -1,5 +1,6 @@
 {
   "main": {
+    "autolock": "enable",
     "timeout_seq": "no",
     "rotate_direction": "left"
   },

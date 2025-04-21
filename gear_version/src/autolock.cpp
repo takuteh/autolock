@@ -77,7 +77,12 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
             //line.send_line_message(au_set.line_user_ids,"ドアが閉まりました");
             slack.send_slack_message(au_set.slack_send_channel, "ドアが閉まりました"); })
             .detach();
-        if (!autolock.read_switch(level, DEBOUNCE_TIME_US))
+        // オートロックが無効なら施錠しない
+        if (au_set.autolock == "disable")
+        {
+            return;
+        }
+        else if (!autolock.read_switch(level, DEBOUNCE_TIME_US))
         {
             cl_flag = false;
             std::thread([]
@@ -180,7 +185,7 @@ int main()
         autolock.current_rsw_time = time_time();
         auto elapsed_rsw_time = autolock.current_rsw_time - autolock.start_rsw_time;
         // 鍵が開きっぱなしにならないための処理
-        if (au_set.timeout_seq != "no")
+        if (au_set.timeout_seq != "no" && au_set.autolock == "enable")
         {
             timeout_seq = stoi(au_set.timeout_seq);
             if (cl_flag == true && elapsed_rsw_time >= timeout_seq)
