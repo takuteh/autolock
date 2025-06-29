@@ -8,6 +8,8 @@ public:
     autolock_setting(std::string setting_file);
     bool load_setting();
     const char *broker_address;
+    const char *boot_topic;
+    const char *boot_message;
     const char *open_topic;
     const char *close_topic;
     const char *relay_topic;
@@ -27,6 +29,8 @@ public:
 
 private:
     std::string Broker_address;
+    std::string Boot_topic;
+    std::string Boot_message;
     std::string Open_topic;
     std::string Close_topic;
     std::string Relay_topic;

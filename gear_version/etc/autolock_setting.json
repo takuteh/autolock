@@ -7,6 +7,8 @@
   },
   "mqtt": {
     "broker_address": "localhost",
+    "boot_topic": "/autolock/boot",
+    "boot_message": "start",
     "open_topic": "/door/open",
     "open_message": "1",
     "close_topic": "/door/close",

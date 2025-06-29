@@ -180,6 +180,11 @@ int main()
     callback(pi, RE_SW, EITHER_EDGE, read_sw);
 
     mosquitto_loop_start(mqtt.mosq);
+
+    // 起動通知の送信
+    int ret = mosquitto_publish(mqtt.mosq, NULL, au_set.boot_topic, strlen(au_set.boot_message), au_set.boot_message, 1, false);
+    slack.send_slack_message(au_set.slack_send_channel, "オートロックが起動しました");
+
     while (1)
     {
         autolock.current_rsw_time = time_time();

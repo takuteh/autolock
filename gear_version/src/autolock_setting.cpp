@@ -16,6 +16,7 @@ autolock_setting::autolock_setting(std::string setting_file)
     this->ignore_clsw = "yes";
     this->rotate_direction = "left";
     this->broker_address = "localhost";
+    this->boot_topic = "/autolock/boot";
     this->open_topic = "/door/open";
     this->close_topic = "/door/close";
     this->relay_topic = "/door/relay";
@@ -55,11 +56,15 @@ bool autolock_setting::load_setting()
 
     // mosquittoで使うものは[const char*]のため、一旦string型の変数に格納
     this->Broker_address = jobj["mqtt"]["broker_address"];
+    this->Boot_topic = jobj["mqtt"]["boot_topic"];
+    this->Boot_message = jobj["mqtt"]["boot_message"];
     this->Open_topic = jobj["mqtt"]["open_topic"];
     this->Close_topic = jobj["mqtt"]["close_topic"];
     this->Relay_topic = jobj["mqtt"]["relay_topic"];
     // const char*に変換
     this->broker_address = this->Broker_address.c_str();
+    this->boot_topic = this->Boot_topic.c_str();
+    this->boot_message = this->Boot_message.c_str();
     this->open_topic = this->Open_topic.c_str();
     this->close_topic = this->Close_topic.c_str();
     this->relay_topic = this->Relay_topic.c_str();
