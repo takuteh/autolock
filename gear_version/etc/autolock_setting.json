@@ -7,15 +7,27 @@
   },
   "mqtt": {
     "broker_address": "localhost",
-    "boot_topic": "/autolock/boot",
-    "boot_message": "start",
-    "open_topic": "/door/open",
-    "open_message": "1",
-    "close_topic": "/door/close",
-    "close_message": "1",
-    "relay_topic": "/door/relay",
-    "relay_message": "1",
-    "mqtt_port": 1883
+    "mqtt_port": 1883,
+    "publish": {
+      "boot": {
+        "topic": "/autolock/boot",
+        "message": "start"
+      }
+    },
+    "subscribe": {
+      "open": {
+        "topic": "/door/open",
+        "message": "1"
+      },
+      "close": {
+        "topic": "/door/close",
+        "message": "1"
+      },
+      "relay": {
+        "topic": "/door/relay",
+        "message": "1"
+      }
+    }
   },
   "line": {
     "channel_token": "token",

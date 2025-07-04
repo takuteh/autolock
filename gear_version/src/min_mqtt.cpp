@@ -23,6 +23,11 @@ void Mqtt::clean_mqtt()
 int Mqtt::initialize_mqtt(autolock_setting &set)
 {
     mosquitto_lib_init();
+    const char *sub_topics[] = {
+        set.open_topic,
+        set.close_topic,
+        set.relay_topic};
+
     if (!this->mosq)
     {
         std::cerr << "Error: Unable to create Mosquitto instance." << std::endl;
@@ -36,25 +41,16 @@ int Mqtt::initialize_mqtt(autolock_setting &set)
         return 1;
     }
 
-    if (mosquitto_subscribe(this->mosq, NULL, set.open_topic, 0) != MOSQ_ERR_SUCCESS)
+    size_t topic_count = sizeof(sub_topics) / sizeof(sub_topics[0]);
+    for (size_t i = 0; i < topic_count; i++)
     {
-        std::cerr << "Error: Unable to subscribe to the topic." << std::endl;
-        this->clean_mqtt();
-        return 1;
+        if (mosquitto_subscribe(this->mosq, NULL, sub_topics[i], 0) != MOSQ_ERR_SUCCESS)
+        {
+            std::cerr << "Error: Unable to subscribe to the topic." << std::endl;
+            this->clean_mqtt();
+            return 1;
+        }
     }
 
-    if (mosquitto_subscribe(this->mosq, NULL, set.close_topic, 0) != MOSQ_ERR_SUCCESS)
-    {
-        std::cerr << "Error: Unable to subscribe to the topic." << std::endl;
-        this->clean_mqtt();
-        return 1;
-    }
-
-    if (mosquitto_subscribe(this->mosq, NULL, set.relay_topic, 0) != MOSQ_ERR_SUCCESS)
-    {
-        std::cerr << "Error: Unable to subscribe to the topic." << std::endl;
-        this->clean_mqtt();
-        return 1;
-    }
     return 0;
 }
