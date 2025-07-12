@@ -13,6 +13,8 @@
 #include <autolock_setting.h>
 #include <line_api.h>
 #include <slack_api.h>
+#include <user_info.h>
+#include <authorize_user.h>
 
 #define OP_SW 9
 #define CL_SW 2
@@ -22,12 +24,15 @@
 #define DEBOUNCE_TIME_US 1.5
 
 bool cl_flag = false; // 施錠フラグ
-std::string setting_file = SETTING_FILE;
+std::string setting_file = MAIN_SETTING_FILE;
+std::string db_setting_file = DB_SETTING_FILE;
 int timeout_seq;
 int pi = pigpio_start(nullptr, nullptr);
 
 autolock_setting au_set(setting_file);
 CONTROL_SERVO autolock(pi, &au_set);
+AuthorizeUser authorize_user(db_setting_file);
+UserInfo user_info;
 
 Mqtt mqtt;
 line_api line(au_set.line_channel_token);
@@ -113,48 +118,68 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
 
     // 送信メッセージ定義
     std::string send_str = "";
-    std::string app = mqtt_mes.value("app", "MQTT");
-    std::string user = mqtt_mes.value("user", "Unknown");
-    std::string operate_mes = mqtt_mes.value("message", "null");
-    std::string operation = "";
+    user_info.user_name = mqtt_mes.value("user", "Unknown");
+    user_info.line_user_id = mqtt_mes.value("line_user_id", "null");
+    user_info.slack_user_id = mqtt_mes.value("slack_user_id", "null");
 
+    std::string app = mqtt_mes.value("app", "MQTT");
+    std::string operate_mes = mqtt_mes.value("message", "null");
+
+    bool is_authorized = authorize_user.authorize(user_info, app);
+
+    std::string operation = "";
     bool send_flag = false; // 送信フラグ
 
     if (topic_str == au_set.open_topic && operate_mes == au_set.open_message)
     {
-        autolock.open_switch(1, DEBOUNCE_TIME_US);
-        cl_flag = true;
+        if (is_authorized)
+        {
+            autolock.open_switch(1, DEBOUNCE_TIME_US);
+            cl_flag = true;
+        }
         send_flag = true;
         operation = "解錠";
     }
 
     if (topic_str == au_set.close_topic && operate_mes == au_set.close_message)
     {
-        autolock.close_switch(1, DEBOUNCE_TIME_US);
-        cl_flag = false;
+        if (is_authorized)
+        {
+            autolock.close_switch(1, DEBOUNCE_TIME_US);
+            cl_flag = false;
+        }
         send_flag = true;
         operation = "施錠";
     }
 
     if (topic_str == au_set.relay_topic && operate_mes == au_set.relay_message)
     {
-        std::cout << "relay" << std::endl;
-        gpio_write(pi, RELAY, 1);
-        sleep(1);
-        gpio_write(pi, RELAY, 0);
+        if (is_authorized)
+        {
+            std::cout << "relay" << std::endl;
+            gpio_write(pi, RELAY, 1);
+            sleep(1);
+            gpio_write(pi, RELAY, 0);
+        }
         send_flag = true;
         operation = "モーターリセット";
     }
 
     if (send_flag)
     {
-        send_str = user + "が" + app + "で" + operation + "しました";
+        if (is_authorized)
+        {
+            send_str = user_info.user_name + "が" + app + "で" + operation + "しました";
+        }
+        else
+        {
+            send_str = user_info.user_name + "が" + app + "で" + operation + "を試みました";
+        }
         // line.send_line_message(au_set.line_user_ids, send_str);
         slack.send_slack_message(au_set.slack_send_channel, send_str);
         send_flag = false;
     }
 }
-
 int main()
 {
     //  mqttの設定

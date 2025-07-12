@@ -7,6 +7,7 @@ enable_language(CXX)
 get_filename_component(CURRENT_DIR "${CMAKE_SOURCE_DIR}" ABSOLUTE)
 find_library(PIGPIO pigpiod_if2)
 find_library(CURL curl)
+find_library(MYSQL mysqlcppconn)
 
 # 出力ディレクトリを設定
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CURRENT_DIR}/../bin)
@@ -46,5 +47,9 @@ target_link_libraries(line_test ${CURL})
 #slack送信テスト
 add_executable(slack_test slack_test.cpp ../slack_api.cpp)
 target_link_libraries(slack_test ${CURL})
+
+#db認証テスト
+add_executable(db_connection db_connection.cpp)
+target_link_libraries(db_connection ${MYSQL})
 
 include_directories(../../include)
