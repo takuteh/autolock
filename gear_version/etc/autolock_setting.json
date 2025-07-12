@@ -1,7 +1,7 @@
 {
   "main": {
-    "autolock": "enable",
-    "ignore_clsw": "yes",
+    "autolock": true,
+    "ignore_clsw": true,
     "timeout_seq": "no",
     "rotate_direction": "left",
     "authorize_external_users": true,

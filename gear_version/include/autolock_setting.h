@@ -14,9 +14,9 @@ public:
     const char *close_topic;
     const char *relay_topic;
     int mqtt_port;
-    std::string autolock;
+    bool autolock;
     std::string rotate_direction;
-    std::string ignore_clsw;
+    bool ignore_clsw;
     std::string timeout_seq;
     bool authorize_external_users;
     bool authorize_internal_users;

@@ -83,7 +83,7 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
             slack.send_slack_message(au_set.slack_send_channel, "ドアが閉まりました"); })
             .detach();
         // オートロックが無効なら施錠しない
-        if (au_set.autolock == "disable")
+        if (!au_set.autolock)
         {
             return;
         }
@@ -237,7 +237,7 @@ int main()
         autolock.current_rsw_time = time_time();
         auto elapsed_rsw_time = autolock.current_rsw_time - autolock.start_rsw_time;
         // 鍵が開きっぱなしにならないための処理
-        if (au_set.timeout_seq != "no" && au_set.autolock == "enable")
+        if (au_set.timeout_seq != "no" && au_set.autolock)
         {
             timeout_seq = stoi(au_set.timeout_seq);
             if (cl_flag == true && elapsed_rsw_time >= timeout_seq)

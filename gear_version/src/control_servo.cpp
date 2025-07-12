@@ -94,7 +94,7 @@ int CONTROL_SERVO::close_switch(unsigned level, float debounce_time)
     }
     if (level == 1)
     {
-        if (gpio_read(pi, RE_SW) == 1&& this->au_set->ignore_clsw == "yes")
+        if (gpio_read(pi, RE_SW) == 1 && this->au_set->ignore_clsw)
         { // リードセンサーに反応がない場合無視する
             std::cout << "The door is open so ignore it" << std::endl;
             return 1;
