@@ -3,7 +3,9 @@
     "autolock": "enable",
     "ignore_clsw": "yes",
     "timeout_seq": "no",
-    "rotate_direction": "left"
+    "rotate_direction": "left",
+    "authorize_external_users": true,
+    "authorize_internal_users": false
   },
   "mqtt": {
     "broker_address": "localhost",

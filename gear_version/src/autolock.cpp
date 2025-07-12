@@ -125,7 +125,29 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     std::string app = mqtt_mes.value("app", "MQTT");
     std::string operate_mes = mqtt_mes.value("message", "null");
 
-    bool is_authorized = authorize_user.authorize(user_info, app);
+    bool is_authorized;
+    if (app == "MQTT") // 内部からの通信の場合
+    {
+        if (au_set.authorize_internal_users)
+        {
+            is_authorized = authorize_user.authorize(user_info, app);
+        }
+        else
+        {
+            is_authorized = true;
+        }
+    }
+    else // 外部からの通信の場合
+    {
+        if (au_set.authorize_external_users)
+        {
+            is_authorized = authorize_user.authorize(user_info, app);
+        }
+        else
+        {
+            is_authorized = true;
+        }
+    }
 
     std::string operation = "";
     bool send_flag = false; // 送信フラグ

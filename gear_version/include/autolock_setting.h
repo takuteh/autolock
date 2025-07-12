@@ -18,6 +18,8 @@ public:
     std::string rotate_direction;
     std::string ignore_clsw;
     std::string timeout_seq;
+    bool authorize_external_users;
+    bool authorize_internal_users;
     std::string open_message;
     std::string close_message;
     std::string relay_message;

@@ -28,6 +28,8 @@ autolock_setting::autolock_setting(std::string setting_file)
     this->slack_send_channel = "#general";
     this->mqtt_port = 1883;
     this->timeout_seq = "no";
+    this->authorize_external_users = true;
+    this->authorize_internal_users = false;
     // 設定読み込み
     this->load_setting();
 }
@@ -73,6 +75,8 @@ bool autolock_setting::load_setting()
     this->ignore_clsw = jobj["main"]["ignore_clsw"];
     this->rotate_direction = jobj["main"]["rotate_direction"];
     this->timeout_seq = jobj["main"]["timeout_seq"];
+    this->authorize_external_users = jobj["main"]["authorize_external_users"];
+    this->authorize_internal_users = jobj["main"]["authorize_internal_users"];
     this->open_message = jobj["mqtt"]["subscribe"]["open"]["message"];
     this->close_message = jobj["mqtt"]["subscribe"]["close"]["message"];
     this->relay_message = jobj["mqtt"]["subscribe"]["relay"]["message"];
