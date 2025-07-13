@@ -11,8 +11,10 @@
 #include <cppconn/statement.h>
 
 #include <authorize_user.h>
+#include <time_utils.h>
 
 using json = nlohmann::json;
+TimeUtils tu;
 
 AuthorizeUser::AuthorizeUser(std::string db_setting_file)
 {
@@ -44,6 +46,7 @@ bool AuthorizeUser::authorize(UserInfo &user_info, std::string app)
     std::string key;
     std::string value;
     bool is_authorized = false;
+    bool is_registered = false;
 
     auto user_map = user_info.toMap();
 
@@ -78,8 +81,25 @@ bool AuthorizeUser::authorize(UserInfo &user_info, std::string app)
 
         while (res->next())
         {
+            // tm型に統一
+            std::tm now_tm = tu.current_datetime_tm();
+            std::tm db_start_tm = tu.parse_datetime_string(res->getString("start_date"));
+            std::tm db_end_tm = tu.parse_datetime_string(res->getString("end_date"));
+            std::cout << "now:" << std::mktime(&now_tm) << std::endl;
+            std::cout << "start:" << std::mktime(&db_start_tm) << std::endl;
+            std::cout << "end:" << std::mktime(&db_end_tm) << std::endl;
+            // エポック秒に変換して比較
+            if (std::mktime(&now_tm) > std::mktime(&db_start_tm) && std::mktime(&now_tm) < std::mktime(&db_end_tm))
+            {
+                std::cout << "ok" << std::endl;
+                is_authorized = true;
+            }
+            else
+            {
+                std::cout << "expired" << std::endl;
+            }
             std::cout << "id: " << res->getInt("id") << ", name: " << res->getString("user_name") << ", line_id: " << res->getString("line_id") << ", slack_id: " << res->getString("slack_id") << ", start_date: " << res->getString("start_date") << ", end_date: " << res->getString("end_date") << std::endl;
-            is_authorized = true;
+            is_registered = true;
         }
 
         delete res;
@@ -91,6 +111,5 @@ bool AuthorizeUser::authorize(UserInfo &user_info, std::string app)
         std::cerr << "SQL Error: " << e.what() << std::endl;
         is_authorized = false;
     }
-
-    return is_authorized;
+    return is_authorized, is_registered;
 }

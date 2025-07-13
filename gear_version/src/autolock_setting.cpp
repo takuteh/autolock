@@ -12,8 +12,8 @@ autolock_setting::autolock_setting(std::string setting_file)
 {
     this->setting_file = setting_file;
     // デフォルト値を設定
-    this->autolock = "enable";
-    this->ignore_clsw = "yes";
+    this->autolock = true;
+    this->ignore_clsw = true;
     this->rotate_direction = "left";
     this->broker_address = "localhost";
     this->boot_topic = "/autolock/boot";

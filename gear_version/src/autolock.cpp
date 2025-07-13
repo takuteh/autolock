@@ -126,11 +126,12 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     std::string operate_mes = mqtt_mes.value("message", "null");
 
     bool is_authorized;
+    bool is_registered;
     if (app == "MQTT") // 内部からの通信の場合
     {
         if (au_set.authorize_internal_users)
         {
-            is_authorized = authorize_user.authorize(user_info, app);
+            is_authorized, is_registered = authorize_user.authorize(user_info, app);
         }
         else
         {
@@ -141,7 +142,7 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     {
         if (au_set.authorize_external_users)
         {
-            is_authorized = authorize_user.authorize(user_info, app);
+            is_authorized, is_registered = authorize_user.authorize(user_info, app);
         }
         else
         {
@@ -195,7 +196,16 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
         }
         else
         {
-            send_str = user_info.user_name + "が" + app + "で" + operation + "を試みました";
+            std::string auth_status;
+            if (is_registered)
+            {
+                auth_status = "期限切れ";
+            }
+            else
+            {
+                auth_status = "未登録";
+            }
+            send_str = auth_status + "のユーザー" + user_info.user_name + "が" + app + "で" + operation + "を試みました";
         }
         // line.send_line_message(au_set.line_user_ids, send_str);
         slack.send_slack_message(au_set.slack_send_channel, send_str);
