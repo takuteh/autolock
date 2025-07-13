@@ -28,6 +28,9 @@
       "relay": {
         "topic": "/door/relay",
         "message": "1"
+      },
+      "change_config": {
+        "topic": "/autolock/change_conf"
       }
     }
   },

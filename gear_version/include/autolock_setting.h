@@ -13,6 +13,7 @@ public:
     const char *open_topic;
     const char *close_topic;
     const char *relay_topic;
+    const char *change_conf_topic;
     int mqtt_port;
     bool autolock;
     std::string rotate_direction;
@@ -36,6 +37,7 @@ private:
     std::string Open_topic;
     std::string Close_topic;
     std::string Relay_topic;
+    std::string Change_conf_topic;
 };
 
 #endif
