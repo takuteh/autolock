@@ -20,10 +20,12 @@ autolock_setting::autolock_setting(std::string setting_file)
     this->open_topic = "/door/open";
     this->close_topic = "/door/close";
     this->relay_topic = "/door/relay";
+    this->reload_conf_topic = "/autolock/reload";
     this->change_conf_topic = "/autolock/change_conf";
     this->open_message = "1";
     this->close_message = "1";
     this->relay_message = "1";
+    this->reload_conf_message = "1";
     this->line_channel_token = "";
     this->slack_channel_token = "";
     this->slack_send_channel = "#general";
@@ -65,6 +67,7 @@ bool autolock_setting::load_setting()
     this->Close_topic = jobj["mqtt"]["subscribe"]["close"]["topic"];
     this->Relay_topic = jobj["mqtt"]["subscribe"]["relay"]["topic"];
     this->Change_conf_topic = jobj["mqtt"]["subscribe"]["change_config"]["topic"];
+    this->Reload_conf_topic = jobj["mqtt"]["subscribe"]["reload_config"]["topic"];
     // const char*に変換
     this->broker_address = this->Broker_address.c_str();
     this->boot_topic = this->Boot_topic.c_str();
@@ -73,6 +76,7 @@ bool autolock_setting::load_setting()
     this->close_topic = this->Close_topic.c_str();
     this->relay_topic = this->Relay_topic.c_str();
     this->change_conf_topic = this->Change_conf_topic.c_str();
+    this->reload_conf_topic = this->Reload_conf_topic.c_str();
 
     this->autolock = jobj["main"]["autolock"];
     this->ignore_clsw = jobj["main"]["ignore_clsw"];

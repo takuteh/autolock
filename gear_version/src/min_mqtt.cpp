@@ -27,7 +27,8 @@ int Mqtt::initialize_mqtt(autolock_setting &set)
         set.open_topic,
         set.close_topic,
         set.relay_topic,
-        set.change_conf_topic};
+        set.change_conf_topic,
+        set.reload_conf_topic};
 
     if (!this->mosq)
     {

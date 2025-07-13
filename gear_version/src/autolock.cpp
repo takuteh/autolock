@@ -114,6 +114,8 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     std::string topic_str = message->topic;
     std::string payload_str = (char *)message->payload;
     std::cout << topic_str << std::endl;
+    // 設定変更のトピックならそっちに処理を投げる
+
     nlohmann::json mqtt_mes = nlohmann::json::parse(payload_str);
 
     // 送信メッセージ定義
@@ -152,7 +154,15 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
 
     std::string operation = "";
     bool send_flag = false; // 送信フラグ
-
+    if (topic_str == au_set.reload_conf_topic && operate_mes == au_set.reload_conf_message)
+    {
+        if (is_authorized)
+        {
+            au_set.load_setting();
+        }
+        send_flag = true;
+        operation = "設定再読み込み";
+    }
     if (topic_str == au_set.open_topic && operate_mes == au_set.open_message)
     {
         if (is_authorized)
@@ -207,6 +217,7 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
             }
             send_str = auth_status + "のユーザー" + user_info.user_name + "が" + app + "で" + operation + "を試みました";
         }
+        std::cout << send_str << std::endl;
         // line.send_line_message(au_set.line_user_ids, send_str);
         slack.send_slack_message(au_set.slack_send_channel, send_str);
         send_flag = false;
