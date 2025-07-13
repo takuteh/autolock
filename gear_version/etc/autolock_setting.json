@@ -1,46 +1,46 @@
 {
+  "line": {
+    "channel_token": "test",
+    "user_ids": ["id1", "id2"]
+  },
   "main": {
+    "authorize_external_users": true,
+    "authorize_internal_users": false,
     "autolock": true,
     "ignore_clsw": true,
-    "timeout_seq": "no",
     "rotate_direction": "left",
-    "authorize_external_users": true,
-    "authorize_internal_users": false
+    "timeout_seq": "no"
   },
   "mqtt": {
     "broker_address": "localhost",
     "mqtt_port": 1883,
     "publish": {
       "boot": {
-        "topic": "/autolock/boot",
-        "message": "start"
+        "message": "start",
+        "topic": "/autolock/boot"
       }
     },
     "subscribe": {
-      "open": {
-        "topic": "/door/open",
-        "message": "1"
-      },
-      "close": {
-        "topic": "/door/close",
-        "message": "1"
-      },
-      "relay": {
-        "topic": "/door/relay",
-        "message": "1"
-      },
-      "reload_config": {
-        "topic": "/autolock/reload_conf",
-        "message": "1"
-      },
       "change_config": {
         "topic": "/autolock/change_conf"
+      },
+      "close": {
+        "message": "1",
+        "topic": "/door/close"
+      },
+      "open": {
+        "message": "1",
+        "topic": "/door/open"
+      },
+      "relay": {
+        "message": "1",
+        "topic": "/door/relay"
+      },
+      "reload_config": {
+        "message": "1",
+        "topic": "/autolock/reload_conf"
       }
     }
-  },
-  "line": {
-    "channel_token": "token",
-    "user_ids": ["id1", "id2"]
   },
   "slack": {
     "channel_token": "token",

@@ -15,6 +15,7 @@
 #include <slack_api.h>
 #include <user_info.h>
 #include <authorize_user.h>
+#include <change_setting.h>
 
 #define OP_SW 9
 #define CL_SW 2
@@ -31,6 +32,7 @@ int pi = pigpio_start(nullptr, nullptr);
 
 autolock_setting au_set(setting_file);
 CONTROL_SERVO autolock(pi, &au_set);
+ChangeSetting change_set;
 AuthorizeUser authorize_user(db_setting_file);
 UserInfo user_info;
 
@@ -114,7 +116,6 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     std::string topic_str = message->topic;
     std::string payload_str = (char *)message->payload;
     std::cout << topic_str << std::endl;
-    // 設定変更のトピックならそっちに処理を投げる
 
     nlohmann::json mqtt_mes = nlohmann::json::parse(payload_str);
 
@@ -154,15 +155,23 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
 
     std::string operation = "";
     bool send_flag = false; // 送信フラグ
-    if (topic_str == au_set.reload_conf_topic && operate_mes == au_set.reload_conf_message)
+    if (topic_str == au_set.change_conf_topic)
     {
         if (is_authorized)
         {
-            au_set.load_setting();
+            operation = "設定変更";
+            if (change_set.apply_setting(MAIN_SETTING_FILE, mqtt_mes["setting_content"]))
+            {
+                au_set.load_setting();
+            }
+            else
+            {
+                operation = "設定変更に失敗";
+            }
         }
         send_flag = true;
-        operation = "設定再読み込み";
     }
+
     if (topic_str == au_set.open_topic && operate_mes == au_set.open_message)
     {
         if (is_authorized)

@@ -27,9 +27,10 @@ add_library(slack_api STATIC ${CMAKE_SOURCE_DIR}/src/slack_api.cpp)
 add_library(autolock_setting STATIC ${CMAKE_SOURCE_DIR}/src/autolock_setting.cpp)
 add_library(authorize_user STATIC ${CMAKE_SOURCE_DIR}/src/authorize_user.cpp)
 add_library(time_utils STATIC ${CMAKE_SOURCE_DIR}/src/time_utils.cpp)
+add_library(change_setting STATIC ${CMAKE_SOURCE_DIR}/src/change_setting.cpp)
 add_library(control_servo SHARED ${CMAKE_SOURCE_DIR}/src/control_servo.cpp)
 
-set(MY_LIBRARY min_mqtt control_servo line_api autolock_setting slack_api authorize_user time_utils)
+set(MY_LIBRARY min_mqtt control_servo line_api autolock_setting slack_api authorize_user time_utils change_setting)
 
 #バイナリ生成
 add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/autolock.cpp)
