@@ -49,10 +49,6 @@ bool ChangeSetting::apply_setting(std::string config_file, nlohmann::json change
     json config;
     ifs >> config;
 
-    // 受け取った設定
-    json incoming = {
-        {"mqtt", {{"broker_address", "local_host"}, {"mqtt_port", 1883}}}};
-
     // 検証 → 問題なければマージ
     if (validate_keys(config, change_message))
     {
