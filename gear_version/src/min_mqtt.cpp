@@ -26,9 +26,10 @@ int Mqtt::initialize_mqtt(autolock_setting &set)
     const char *sub_topics[] = {
         set.open_topic,
         set.close_topic,
-        set.relay_topic,
+        set.relay_on_topic,
+        set.relay_off_topic,
         set.change_conf_topic,
-        set.reload_conf_topic};
+    };
 
     if (!this->mosq)
     {

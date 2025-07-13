@@ -32,9 +32,13 @@
         "message": "1",
         "topic": "/door/open"
       },
-      "relay": {
+      "relay_on": {
         "message": "1",
-        "topic": "/door/relay"
+        "topic": "/door/relay_on"
+      },
+      "relay_off": {
+        "message": "1",
+        "topic": "/door/relay_off"
       },
       "reload_config": {
         "message": "1",

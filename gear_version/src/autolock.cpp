@@ -194,17 +194,26 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
         operation = "施錠";
     }
 
-    if (topic_str == au_set.relay_topic && operate_mes == au_set.relay_message)
+    if (topic_str == au_set.relay_on_topic && operate_mes == au_set.relay_on_message)
     {
         if (is_authorized)
         {
-            std::cout << "relay" << std::endl;
+            std::cout << "relay_on" << std::endl;
             gpio_write(pi, RELAY, 1);
-            sleep(1);
+        }
+        send_flag = true;
+        operation = "モーターオフ";
+    }
+
+    if (topic_str == au_set.relay_off_topic && operate_mes == au_set.relay_off_message)
+    {
+        if (is_authorized)
+        {
+            std::cout << "relay_off" << std::endl;
             gpio_write(pi, RELAY, 0);
         }
         send_flag = true;
-        operation = "モーターリセット";
+        operation = "モーターオン";
     }
 
     if (send_flag)
