@@ -26,7 +26,6 @@ autolock_setting::autolock_setting(std::string setting_file)
     this->close_message = "1";
     this->relay_on_message = "1";
     this->relay_off_message = "1";
-    this->reload_conf_message = "1";
     this->line_channel_token = "";
     this->slack_channel_token = "";
     this->slack_send_channel = "#general";

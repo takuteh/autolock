@@ -1,56 +1,49 @@
 {
-    "line": {
-        "channel_token": "test",
-        "user_ids": [
-            "id1",
-            "id2"
-        ]
+  "line": {
+    "channel_token": "test",
+    "user_ids": ["id1", "id2"]
+  },
+  "main": {
+    "authorize_external_users": false,
+    "authorize_internal_users": false,
+    "autolock": true,
+    "ignore_clsw": true,
+    "rotate_direction": "left",
+    "timeout_seq": "no"
+  },
+  "mqtt": {
+    "broker_address": "localhost",
+    "mqtt_port": 1883,
+    "publish": {
+      "boot": {
+        "message": "start",
+        "topic": "/autolock/boot"
+      }
     },
-    "main": {
-        "authorize_external_users": false,
-        "authorize_internal_users": false,
-        "autolock": true,
-        "ignore_clsw": true,
-        "rotate_direction": "left",
-        "timeout_seq": "no"
-    },
-    "mqtt": {
-        "broker_address": "localhost",
-        "mqtt_port": 1883,
-        "publish": {
-            "boot": {
-                "message": "start",
-                "topic": "/autolock/boot"
-            }
-        },
-        "subscribe": {
-            "change_config": {
-                "topic": "/autolock/change_conf"
-            },
-            "close": {
-                "message": "1",
-                "topic": "/door/close"
-            },
-            "open": {
-                "message": "1",
-                "topic": "/door/open"
-            },
-            "relay_off": {
-                "message": "1",
-                "topic": "/door/relay_off"
-            },
-            "relay_on": {
-                "message": "1",
-                "topic": "/door/relay_on"
-            },
-            "reload_config": {
-                "message": "1",
-                "topic": "/autolock/reload_conf"
-            }
-        }
-    },
-    "slack": {
-        "channel_token": "token",
-        "send_channel": "#general"
+    "subscribe": {
+      "change_config": {
+        "topic": "/autolock/change_conf"
+      },
+      "close": {
+        "message": "1",
+        "topic": "/door/close"
+      },
+      "open": {
+        "message": "1",
+        "topic": "/door/open"
+      },
+      "relay_off": {
+        "message": "1",
+        "topic": "/door/relay_off"
+      },
+      "relay_on": {
+        "message": "1",
+        "topic": "/door/relay_on"
+      }
     }
+  },
+  "slack": {
+    "channel_token": "token",
+    "send_channel": "#general"
+  }
 }

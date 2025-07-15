@@ -15,7 +15,6 @@ public:
     const char *relay_on_topic;
     const char *relay_off_topic;
     const char *change_conf_topic;
-    const char *reload_conf_topic;
     int mqtt_port;
     bool autolock;
     std::string rotate_direction;
@@ -27,7 +26,6 @@ public:
     std::string close_message;
     std::string relay_on_message;
     std::string relay_off_message;
-    std::string reload_conf_message;
     std::string line_channel_token;
     std::string slack_channel_token;
     std::string slack_send_channel;
