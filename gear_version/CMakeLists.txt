@@ -13,6 +13,11 @@ find_library(MYSQL mysqlcppconn)
 
 find_package(Threads REQUIRED)
 
+#コンパイラの設定
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 #生成ライブラリの出力先
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CURRENT_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CURRENT_DIR}/lib)

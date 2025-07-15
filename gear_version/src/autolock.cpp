@@ -122,19 +122,21 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     // 送信メッセージ定義
     std::string send_str = "";
     user_info.user_name = mqtt_mes.value("user", "Unknown");
-    user_info.line_user_id = mqtt_mes.value("line_user_id", "null");
-    user_info.slack_user_id = mqtt_mes.value("slack_user_id", "null");
+    user_info.line_user_id = mqtt_mes.value("line_id", "null");
+    user_info.slack_user_id = mqtt_mes.value("slack_id", "null");
 
     std::string app = mqtt_mes.value("app", "MQTT");
     std::string operate_mes = mqtt_mes.value("message", "null");
 
-    bool is_authorized;
-    bool is_registered;
+    bool is_authorized = false;
+    bool is_registered = false;
     if (app == "MQTT") // 内部からの通信の場合
     {
         if (au_set.authorize_internal_users)
         {
-            is_authorized, is_registered = authorize_user.authorize(user_info, app);
+            std::pair<bool, bool> result = authorize_user.authorize(user_info, app);
+            is_authorized = result.first;
+            is_registered = result.second;
         }
         else
         {
@@ -145,7 +147,9 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
     {
         if (au_set.authorize_external_users)
         {
-            is_authorized, is_registered = authorize_user.authorize(user_info, app);
+            std::pair<bool, bool> result = authorize_user.authorize(user_info, app);
+            is_authorized = result.first;
+            is_registered = result.second;
         }
         else
         {

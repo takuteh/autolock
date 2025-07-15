@@ -41,7 +41,7 @@ AuthorizeUser::AuthorizeUser(std::string db_setting_file)
     this->table = jobj["table"];
 }
 
-bool AuthorizeUser::authorize(UserInfo &user_info, std::string app)
+std::pair<bool, bool> AuthorizeUser::authorize(UserInfo &user_info, std::string app)
 {
     std::string key;
     std::string value;
@@ -85,20 +85,19 @@ bool AuthorizeUser::authorize(UserInfo &user_info, std::string app)
             std::tm now_tm = tu.current_datetime_tm();
             std::tm db_start_tm = tu.parse_datetime_string(res->getString("start_date"));
             std::tm db_end_tm = tu.parse_datetime_string(res->getString("end_date"));
-            std::cout << "now:" << std::mktime(&now_tm) << std::endl;
-            std::cout << "start:" << std::mktime(&db_start_tm) << std::endl;
-            std::cout << "end:" << std::mktime(&db_end_tm) << std::endl;
+
+            user_info.user_name = res->getString("user_name");
+
             // エポック秒に変換して比較
             if (std::mktime(&now_tm) > std::mktime(&db_start_tm) && std::mktime(&now_tm) < std::mktime(&db_end_tm))
             {
-                std::cout << "ok" << std::endl;
+                std::cout << "authorized" << std::endl;
                 is_authorized = true;
             }
             else
             {
                 std::cout << "expired" << std::endl;
             }
-            std::cout << "id: " << res->getInt("id") << ", name: " << res->getString("user_name") << ", line_id: " << res->getString("line_id") << ", slack_id: " << res->getString("slack_id") << ", start_date: " << res->getString("start_date") << ", end_date: " << res->getString("end_date") << std::endl;
             is_registered = true;
         }
 
@@ -111,5 +110,5 @@ bool AuthorizeUser::authorize(UserInfo &user_info, std::string app)
         std::cerr << "SQL Error: " << e.what() << std::endl;
         is_authorized = false;
     }
-    return is_authorized, is_registered;
+    return std::make_pair(is_authorized, is_registered);
 }
