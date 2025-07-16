@@ -37,17 +37,18 @@ autolock_setting::autolock_setting(std::string setting_file)
     this->load_setting();
 }
 
-bool autolock_setting::load_setting()
+std::string autolock_setting::load_setting()
 {
 
     float data = 0;
 
     std::ifstream ifs(this->setting_file);
-    std::string jsonstr, buf;
+    std::string jsonstr = "";
+    std::string buf = "";
     if (ifs.fail())
     {
         std::cerr << "File Open Error" << std::endl;
-        return false;
+        return jsonstr;
     }
 
     while (!ifs.eof())
@@ -62,7 +63,6 @@ bool autolock_setting::load_setting()
     // mosquittoで使うものは[const char*]のため、一旦string型の変数に格納
     this->Broker_address = jobj["mqtt"]["broker_address"];
     this->Boot_topic = jobj["mqtt"]["publish"]["boot"]["topic"];
-    this->Boot_message = jobj["mqtt"]["publish"]["boot"]["message"];
     this->Open_topic = jobj["mqtt"]["subscribe"]["open"]["topic"];
     this->Close_topic = jobj["mqtt"]["subscribe"]["close"]["topic"];
     this->Relay_on_topic = jobj["mqtt"]["subscribe"]["relay_on"]["topic"];
@@ -72,7 +72,6 @@ bool autolock_setting::load_setting()
     // const char*に変換
     this->broker_address = this->Broker_address.c_str();
     this->boot_topic = this->Boot_topic.c_str();
-    this->boot_message = this->Boot_message.c_str();
     this->open_topic = this->Open_topic.c_str();
     this->close_topic = this->Close_topic.c_str();
     this->relay_on_topic = this->Relay_on_topic.c_str();
@@ -94,5 +93,5 @@ bool autolock_setting::load_setting()
     this->slack_channel_token = jobj["slack"]["channel_token"];
     this->slack_send_channel = jobj["slack"]["send_channel"];
     this->line_user_ids = jobj["line"]["user_ids"].get<std::vector<std::string>>();
-    return true;
+    return jsonstr;
 }

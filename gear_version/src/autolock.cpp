@@ -166,7 +166,7 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
             operation = "設定変更";
             if (change_set.apply_setting(MAIN_SETTING_FILE, mqtt_mes["setting_content"]))
             {
-                au_set.load_setting();
+                mosquitto_publish(mqtt.mosq, NULL, au_set.boot_topic, au_set.load_setting().size(), au_set.load_setting().c_str(), 1, false);
             }
             else
             {
@@ -272,7 +272,7 @@ int main()
     mosquitto_loop_start(mqtt.mosq);
 
     // 起動通知の送信
-    int ret = mosquitto_publish(mqtt.mosq, NULL, au_set.boot_topic, strlen(au_set.boot_message), au_set.boot_message, 1, false);
+    mosquitto_publish(mqtt.mosq, NULL, au_set.boot_topic, au_set.load_setting().size(), au_set.load_setting().c_str(), 1, false);
     slack.send_slack_message(au_set.slack_send_channel, "オートロックが起動しました");
 
     while (1)
