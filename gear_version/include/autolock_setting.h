@@ -27,7 +27,8 @@ public:
     std::string relay_off_message;
     std::string line_channel_token;
     std::string slack_channel_token;
-    std::string slack_send_channel;
+    std::string slack_log_channel;
+    std::string slack_app_operate_notify_channel;
     std::string setting_file;
     std::vector<std::string> line_user_ids;
 

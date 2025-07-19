@@ -28,7 +28,7 @@ autolock_setting::autolock_setting(std::string setting_file)
     this->relay_off_message = "1";
     this->line_channel_token = "";
     this->slack_channel_token = "";
-    this->slack_send_channel = "#general";
+    this->slack_log_channel = "#general";
     this->mqtt_port = 1883;
     this->timeout_seq = "no";
     this->authorize_external_users = true;
@@ -91,7 +91,8 @@ std::string autolock_setting::load_setting()
     this->mqtt_port = jobj["mqtt"]["mqtt_port"];
     this->line_channel_token = jobj["line"]["channel_token"];
     this->slack_channel_token = jobj["slack"]["channel_token"];
-    this->slack_send_channel = jobj["slack"]["send_channel"];
+    this->slack_log_channel = jobj["slack"]["log_channel"];
+    this->slack_app_operate_notify_channel = jobj["slack"]["app_operate_notify_channel"];
     this->line_user_ids = jobj["line"]["user_ids"].get<std::vector<std::string>>();
     return jsonstr;
 }

@@ -51,7 +51,7 @@ void open_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
         std::thread([]
                     { 
             //line.send_line_message(au_set.line_user_ids,"ボタンで解錠しました");
-            slack.send_slack_message(au_set.slack_send_channel, "ボタンで解錠しました"); })
+            slack.send_slack_message(au_set.slack_log_channel, "ボタンで解錠しました"); })
             .detach();
     }
 }
@@ -64,7 +64,7 @@ void close_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
         std::thread([]
                     { 
             //line.send_line_message(au_set.line_user_ids,"ボタンで施錠しました");
-            slack.send_slack_message(au_set.slack_send_channel, "ボタンで施錠しました"); })
+            slack.send_slack_message(au_set.slack_log_channel, "ボタンで施錠しました"); })
             .detach();
     }
 }
@@ -82,7 +82,7 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
         std::thread([]
                     {
             //line.send_line_message(au_set.line_user_ids,"ドアが閉まりました");
-            slack.send_slack_message(au_set.slack_send_channel, "ドアが閉まりました"); })
+            slack.send_slack_message(au_set.slack_log_channel, "ドアが閉まりました"); })
             .detach();
         // オートロックが無効なら施錠しない
         if (!au_set.autolock)
@@ -95,7 +95,7 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
             std::thread([]
                         {
                 //line.send_line_message(au_set.line_user_ids,"施錠しました");
-                slack.send_slack_message(au_set.slack_send_channel, "施錠しました"); })
+                slack.send_slack_message(au_set.slack_log_channel, "施錠しました"); })
                 .detach();
             last_rsw_exe_time = time_time(); // 最終処理時刻の更新
         }
@@ -105,7 +105,7 @@ void read_sw(int pi, unsigned gpio, unsigned level, uint32_t tick)
         std::thread([]
                     { 
             //line.send_line_message(au_set.line_user_ids,"ドアが開きました");
-            slack.send_slack_message(au_set.slack_send_channel, "ドアが開きました"); })
+            slack.send_slack_message(au_set.slack_log_channel, "ドアが開きました"); })
             .detach();
         last_rsw_exe_time = time_time(); // 最終処理時刻の更新
     }
@@ -241,7 +241,8 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
         }
         std::cout << send_str << std::endl;
         // line.send_line_message(au_set.line_user_ids, send_str);
-        slack.send_slack_message(au_set.slack_send_channel, send_str);
+        slack.send_slack_message(au_set.slack_log_channel, send_str);
+        slack.send_slack_message(au_set.slack_app_operate_notify_channel, send_str);
         send_flag = false;
     }
 }
@@ -273,7 +274,7 @@ int main()
 
     // 起動通知の送信
     mosquitto_publish(mqtt.mosq, NULL, au_set.boot_topic, au_set.load_setting().size(), au_set.load_setting().c_str(), 1, false);
-    slack.send_slack_message(au_set.slack_send_channel, "オートロックが起動しました");
+    slack.send_slack_message(au_set.slack_log_channel, "オートロックが起動しました");
 
     while (1)
     {
@@ -294,7 +295,7 @@ int main()
                     std::thread([]
                                 {
                     //line.send_line_message(au_set.line_user_ids, "タイムアウトしたため施錠しました");
-                    slack.send_slack_message(au_set.slack_send_channel, "タイムアウトしたため施錠しました"); })
+                    slack.send_slack_message(au_set.slack_log_channel, "タイムアウトしたため施錠しました"); })
                         .detach();
                 }
             }
