@@ -4,7 +4,7 @@
     "user_ids": ["id1", "id2"]
   },
   "main": {
-    "authorize_external_users": false,
+    "authorize_external_users": true,
     "authorize_internal_users": false,
     "autolock": true,
     "ignore_clsw": true,

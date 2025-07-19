@@ -49,8 +49,11 @@ std::pair<bool, bool> AuthorizeUser::authorize(UserInfo &user_info, std::string 
     bool is_registered = false;
 
     auto user_map = user_info.toMap();
-
-    if (app == "MQTT")
+    std::transform(app.begin(), app.end(), app.begin(),
+                   [](unsigned char c)
+                   { return std::tolower(c); });
+    std::cout << app << std::endl;
+    if (app == "mqtt")
     {
         key = "user_name";
     }
