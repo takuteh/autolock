@@ -237,7 +237,7 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
             {
                 auth_status = "未登録";
             }
-            send_str = auth_status + "のユーザー" + user_info.user_name + "が" + app + "で" + operation + "を試みました";
+            send_str = auth_status + "のユーザー" + user_info.user_name + "が" + app + "で" + operation + "を試みました。user idは"+ user_info.line_user_id +"です。";
         }
         std::cout << send_str << std::endl;
         // line.send_line_message(au_set.line_user_ids, send_str);
