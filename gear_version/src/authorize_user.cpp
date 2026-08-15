@@ -35,6 +35,7 @@ AuthorizeUser::AuthorizeUser(std::string db_setting_file)
     auto jobj = json::parse(jsonstr);
 
     this->host = jobj["host"];
+    this->port = jobj["port"];
     this->user = jobj["user"];
     this->password = jobj["password"];
     this->database = jobj["database"];
@@ -73,7 +74,7 @@ std::pair<bool, bool> AuthorizeUser::authorize(UserInfo &user_info, std::string 
 
         // ドライバ取得
         driver = sql::mysql::get_mysql_driver_instance();
-        con = driver->connect(this->host, this->user, this->password);
+        con = driver->connect("tcp://" + this->host + ":" + this->port , this->user, this->password);
 
         // DB選択
         con->setSchema(this->database);
