@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include <cstdlib>
 #include <stdexcept>
 #include <mysql_driver.h>
 #include <mysql_connection.h>
@@ -13,33 +13,16 @@
 #include <authorize_user.h>
 #include <time_utils.h>
 
-using json = nlohmann::json;
 TimeUtils tu;
 
-AuthorizeUser::AuthorizeUser(std::string db_setting_file)
+AuthorizeUser::AuthorizeUser()
 {
-    std::ifstream ifs(db_setting_file);
-    std::string jsonstr, buf;
-    if (ifs.fail())
-    {
-        std::cerr << "File Open Error" << std::endl;
-    }
-
-    while (!ifs.eof())
-    {
-        getline(ifs, buf);
-        jsonstr += buf;
-    }
-
-    // JSON文字列をパース:
-    auto jobj = json::parse(jsonstr);
-
-    this->host = jobj["host"];
-    this->port = jobj["port"];
-    this->user = jobj["user"];
-    this->password = jobj["password"];
-    this->database = jobj["database"];
-    this->table = jobj["table"];
+    this->host = std::getenv("MARIADB_HOST");
+    this->port = std::stoi(std::getenv("MARIADB_PORT"));
+    this->user = std::getenv("MARIADB_USER");
+    this->password = std::getenv("MARIADB_PASSWORD");
+    this->database = std::getenv("MARIADB_DATABASE");
+    this->table = std::getenv("MARIADB_TABLE");
 }
 
 std::pair<bool, bool> AuthorizeUser::authorize(UserInfo &user_info, std::string app)

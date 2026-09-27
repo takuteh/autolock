@@ -9,7 +9,7 @@ class AuthorizeUser
 {
 
 public:
-    AuthorizeUser(std::string db_setting_file);
+    AuthorizeUser();
     std::pair<bool, bool> authorize(UserInfo &user_info, std::string app);
 
 private:

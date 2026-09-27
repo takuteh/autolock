@@ -26,14 +26,13 @@
 
 bool cl_flag = false; // 施錠フラグ
 std::string setting_file = MAIN_SETTING_FILE;
-std::string db_setting_file = DB_SETTING_FILE;
 int timeout_seq;
 int pi = pigpio_start(nullptr, nullptr);
 
 autolock_setting au_set(setting_file);
 CONTROL_SERVO autolock(pi, &au_set);
 ChangeSetting change_set;
-AuthorizeUser authorize_user(db_setting_file);
+AuthorizeUser authorize_user;
 UserInfo user_info;
 
 Mqtt mqtt;
