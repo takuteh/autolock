@@ -7,6 +7,7 @@
 #include <ctime>
 #include <nlohmann/json.hpp>
 #include <limits>
+#include <cstdlib>
 // 独自ライブラリ
 #include <control_servo.h>
 #include <min_mqtt.h>
@@ -27,7 +28,9 @@
 bool cl_flag = false; // 施錠フラグ
 std::string setting_file = MAIN_SETTING_FILE;
 int timeout_seq;
-int pi = pigpio_start(nullptr, nullptr);
+
+const char* pigpio_host = std::getenv("PIGPIO_HOST");
+int pi = pigpio_start(pigpio_host, nullptr);
 
 autolock_setting au_set(setting_file);
 CONTROL_SERVO autolock(pi, &au_set);
