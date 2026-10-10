@@ -8,9 +8,10 @@
 using json = nlohmann::json;
 using namespace std;
 
-autolock_setting::autolock_setting(std::string setting_file)
+autolock_setting::autolock_setting(std::string setting_file_dir)
 {
-    this->setting_file = setting_file;
+    this->main_setting_file = setting_file_dir + "/autolock_setting.json";
+    this->secret_setting_file = setting_file_dir + "/autolock_secret.json";
     // デフォルト値を設定
     this->autolock = true;
     this->ignore_clsw = true;
@@ -42,23 +43,20 @@ std::string autolock_setting::load_setting()
 
     float data = 0;
 
-    std::ifstream ifs(this->setting_file);
+    std::ifstream ifs(this->main_setting_file);
+    std::ifstream secret_ifs(this->secret_setting_file);
     std::string jsonstr = "";
     std::string buf = "";
-    if (ifs.fail())
+    
+    if ( !ifs.is_open() || !secret_ifs.is_open() )
     {
         std::cerr << "File Open Error" << std::endl;
-        return jsonstr;
-    }
-
-    while (!ifs.eof())
-    {
-        getline(ifs, buf);
-        jsonstr += buf;
+        return "";
     }
 
     // JSON文字列をパース:
     auto jobj = json::parse(jsonstr);
+    auto secret_jobj = json::parse(jsonstr); 
 
     // mosquittoで使うものは[const char*]のため、一旦string型の変数に格納
     this->Broker_address = jobj["mqtt"]["broker_address"];
@@ -89,10 +87,13 @@ std::string autolock_setting::load_setting()
     this->relay_on_message = jobj["mqtt"]["subscribe"]["relay_on"]["message"];
     this->relay_off_message = jobj["mqtt"]["subscribe"]["relay_off"]["message"];
     this->mqtt_port = jobj["mqtt"]["mqtt_port"];
-    this->line_channel_token = jobj["line"]["channel_token"];
-    this->slack_channel_token = jobj["slack"]["channel_token"];
-    this->slack_log_channel = jobj["slack"]["log_channel"];
-    this->slack_app_operate_notify_channel = jobj["slack"]["app_operate_notify_channel"];
-    this->line_user_ids = jobj["line"]["user_ids"].get<std::vector<std::string>>();
+    
+    //secret
+    this->line_channel_token = secret_jobj["line"]["channel_token"];
+    this->slack_channel_token = secret_jobj["slack"]["channel_token"];
+    this->slack_log_channel = secret_jobj["slack"]["log_channel"];
+    this->slack_app_operate_notify_channel = secret_jobj["slack"]["app_operate_notify_channel"];
+    this->line_user_ids = secret_jobj["line"]["user_ids"].get<std::vector<std::string>>();
+    
     return jsonstr;
 }

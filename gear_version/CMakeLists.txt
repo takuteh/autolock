@@ -42,8 +42,7 @@ add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/autolock.cpp)
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CURRENT_DIR}/bin)
 
 #設定ファイルのパスをマクロに登録
-target_compile_definitions(${PROJECT_NAME} PRIVATE MAIN_SETTING_FILE="${CURRENT_DIR}/etc/autolock_setting.json")
-target_compile_definitions(${PROJECT_NAME} PRIVATE DB_SETTING_FILE="${CURRENT_DIR}/etc/authorize_db_setting.json")
+target_compile_definitions(${PROJECT_NAME} PRIVATE SETTING_FILE_DIR="${CURRENT_DIR}/etc")
 
 #ライブラリのリンク
 target_link_libraries(${PROJECT_NAME}

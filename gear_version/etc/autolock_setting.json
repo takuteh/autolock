@@ -1,8 +1,4 @@
 {
-  "line": {
-    "channel_token": "test",
-    "user_ids": ["id1", "id2"]
-  },
   "main": {
     "authorize_external_users": true,
     "authorize_internal_users": false,
@@ -42,9 +38,4 @@
       }
     }
   },
-  "slack": {
-    "channel_token": "token",
-    "log_channel": "#general",
-    "app_operate_notify_channel": "#admin"
-  }
 }

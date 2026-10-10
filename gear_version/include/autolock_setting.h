@@ -5,8 +5,12 @@
 class autolock_setting
 {
 public:
-    autolock_setting(std::string setting_file);
+    autolock_setting(std::string setting_file_dir);
     std::string load_setting();
+    
+    std::string main_setting_file;
+    std::string secret_setting_file;
+    
     const char *broker_address;
     const char *boot_topic;
     const char *open_topic;
@@ -29,7 +33,6 @@ public:
     std::string slack_channel_token;
     std::string slack_log_channel;
     std::string slack_app_operate_notify_channel;
-    std::string setting_file;
     std::vector<std::string> line_user_ids;
 
 private:

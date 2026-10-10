@@ -26,13 +26,13 @@
 #define DEBOUNCE_TIME_US 1.5
 
 bool cl_flag = false; // 施錠フラグ
-std::string setting_file = MAIN_SETTING_FILE;
+std::string setting_file_dir = SETTING_FILE_DIR;
 int timeout_seq;
 
 const char* pigpio_host = std::getenv("PIGPIO_HOST");
 int pi = pigpio_start(pigpio_host, nullptr);
 
-autolock_setting au_set(setting_file);
+autolock_setting au_set(setting_file_dir);
 CONTROL_SERVO autolock(pi, &au_set);
 ChangeSetting change_set;
 AuthorizeUser authorize_user;
@@ -166,7 +166,7 @@ void mqtt_message_received_wrapper(struct mosquitto *mosq, void *userdata, const
         if (is_authorized)
         {
             operation = "設定変更";
-            if (change_set.apply_setting(MAIN_SETTING_FILE, mqtt_mes["setting_content"]))
+            if (change_set.apply_setting(std::string(SETTING_FILE_DIR) + "/autolock_setting.json", mqtt_mes["setting_content"]))
             {
                 mosquitto_publish(mqtt.mosq, NULL, au_set.boot_topic, au_set.load_setting().size(), au_set.load_setting().c_str(), 1, false);
             }
