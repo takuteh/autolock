@@ -46,6 +46,7 @@ std::string autolock_setting::load_setting()
     std::ifstream ifs(this->main_setting_file);
     std::ifstream secret_ifs(this->secret_setting_file);
     std::string jsonstr = "";
+    std::string secret_jsonstr = "";
     std::string buf = "";
     
     if ( !ifs.is_open() || !secret_ifs.is_open() )
@@ -53,10 +54,20 @@ std::string autolock_setting::load_setting()
         std::cerr << "File Open Error" << std::endl;
         return "";
     }
+    
+    while (std::getline(ifs, buf))
+    {
+        jsonstr += buf;
+    }
+
+    while (std::getline(secret_ifs, buf))
+    {
+        secret_jsonstr += buf;
+    }
 
     // JSON文字列をパース:
     auto jobj = json::parse(jsonstr);
-    auto secret_jobj = json::parse(jsonstr); 
+    auto secret_jobj = json::parse(secret_jsonstr); 
 
     // mosquittoで使うものは[const char*]のため、一旦string型の変数に格納
     this->Broker_address = jobj["mqtt"]["broker_address"];
